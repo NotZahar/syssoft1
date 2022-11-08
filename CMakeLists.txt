@@ -23,7 +23,6 @@ add_executable(
 add_executable(
     tests
     tests/alg.cpp
-    src/print.cpp
 )
 
 target_include_directories(

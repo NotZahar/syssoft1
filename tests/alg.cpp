@@ -1,11 +1,11 @@
 #include <gtest/gtest.h>
 
-#include "print.hpp"
+#include "print.cpp"
 
 TEST(Print, print)
 {
-    Print p("Hitler");
-    ASSERT_EQ(p.getStr(), "Hitler");
+    Print p("AAA");
+    ASSERT_EQ(p.getStr(), "AAA");
 }
 
 int main(int argc, char **argv)
