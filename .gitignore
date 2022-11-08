@@ -1,4 +1,2 @@
-build-d/
-build-r/
+build/
 CMakeLists.txt.user
-
