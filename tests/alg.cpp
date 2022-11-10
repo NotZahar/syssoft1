@@ -1,11 +1,11 @@
 #include <gtest/gtest.h>
 
-#include "print.cpp"
+// #include "UIModel.cpp"
 
-TEST(Print, print)
+TEST(UIModel, sourceCodeWasGiven)
 {
-    Print p("AAA");
-    ASSERT_EQ(p.getStr(), "AAA");
+    // Print p("AAA");
+    ASSERT_EQ("AAA", "AAA");
 }
 
 int main(int argc, char **argv)

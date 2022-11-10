@@ -1,16 +1,11 @@
 #include <QApplication>
-#include <QDebug>
 
-#include <iostream>
-#include <string>
-
-#include "print.hpp"
+#include "UI/mainWindow.hpp"
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
-    Print p("Zdarova!");
-    p.print();
+    syssoft1::MainWindow mainWindow(nullptr);
 
     return a.exec();
 }
