@@ -1,10 +1,13 @@
-prog1 start 0xa12
-loop: loadr1  r1   one
-        loadr2   r2 two
-    add r1 r2
-    saver3
-    jmp loop
-one word 1
-
-two word 2
-res word ?
+prog start 100
+jmp l1
+a1 resb 10
+a2 resw 20
+b1 word 4096
+b2 byte x\"2F4C008A\"
+b3 byte C\"Hello!\"
+b4 byte 128
+l1 loadr1 b1
+loadr2 b4
+add r1 r2
+saver1 b1
+end

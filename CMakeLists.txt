@@ -17,7 +17,7 @@ add_executable(
     ssoft
     src/main.cpp
     src/algorithm/translator.hpp src/algorithm/translator.cpp
-    src/controllers/UIController.hpp src/controllers/UIController.cpp
+    src/controllers/mainWindowC.hpp src/controllers/mainWindowC.cpp
     src/UI/mainWindow.hpp src/UI/mainWindow.cpp
 )
 

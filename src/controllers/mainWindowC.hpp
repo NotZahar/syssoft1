@@ -1,17 +1,20 @@
-#ifndef UICONTROLLER_H
-#define UICONTROLLER_H
+#ifndef MAINWINDOWC_H
+#define MAINWINDOWC_H
 
 #include <QObject>
 
 #include <string_view>
 
 #include "../algorithm/translator.hpp"
+#include "../UI/mainWindow.hpp"
 
 namespace syssoft1 {
-    class UIController : public QObject {
+    class MainWindowC : public QObject {
         Q_OBJECT
 
     private:
+        MainWindow mainWindow;
+
         std::string_view sourceCode;
         Translator translator;
 
@@ -19,9 +22,9 @@ namespace syssoft1 {
         void sourceCodeWasGiven(const std::string_view _sourceCode);
 
     public:
-        UIController();
-        ~UIController();
+        MainWindowC();
+        ~MainWindowC();
     };
 }
 
-#endif // UICONTROLLER_H
+#endif // MAINWINDOWC_H

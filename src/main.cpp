@@ -1,11 +1,11 @@
 #include <QApplication>
 
-#include "UI/mainWindow.hpp"
+#include "controllers/mainWindowC.hpp"
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
-    syssoft1::MainWindow mainWindow(nullptr);
+    syssoft1::MainWindowC mainWindowC;
 
     return a.exec();
 }

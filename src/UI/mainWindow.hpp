@@ -3,18 +3,17 @@
 
 #include <QWidget>
 #include <QFile>
+#include <QFileInfo>
+#include <QDebug>
 
 #include <string_view>
 #include <iostream>
-
-#include "../controllers/UIController.hpp"
 
 namespace syssoft1 {
     class MainWindow : public QWidget {
         Q_OBJECT
 
     private:
-        UIController uiController;
 
     signals:
         void sourceCodeIsGiven(const std::string_view _sourceCode);

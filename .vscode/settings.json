@@ -4,6 +4,7 @@
         "utility": "cpp",
         "tuple": "cpp",
         "qobject": "cpp",
-        "map": "cpp"
+        "map": "cpp",
+        "string_view": "cpp"
     }
 }
