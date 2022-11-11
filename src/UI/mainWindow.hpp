@@ -1,15 +1,17 @@
 #include <QWidget>
+#include <QFile>
 
 #include <string_view>
+#include <iostream>
 
-#include "../model/UIModel.hpp"
+#include "../controllers/UIController.hpp"
 
 namespace syssoft1 {
     class MainWindow : public QWidget {
         Q_OBJECT
 
     private:
-        UIModel model;
+        UIController uiController;
 
     signals:
         void sourceCodeIsGiven(const std::string_view _sourceCode);

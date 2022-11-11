@@ -1,0 +1,10 @@
+prog1 start 0xa12
+loop: loadr1  r1   one
+        loadr2   r2 two
+    add r1 r2
+    saver3
+    jmp loop
+one word 1
+
+two word 2
+res word ?

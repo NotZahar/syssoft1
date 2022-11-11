@@ -16,7 +16,9 @@ find_package(Qt5 COMPONENTS Widgets Core REQUIRED)
 add_executable(
     ssoft
     src/main.cpp
-    src/print.hpp src/print.cpp
+    src/algorithm/translator.hpp src/algorithm/translator.cpp
+    src/controllers/UIController.hpp src/controllers/UIController.cpp
+    src/UI/mainWindow.hpp src/UI/mainWindow.cpp
 )
 
 # Test Target
