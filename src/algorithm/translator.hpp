@@ -1,3 +1,6 @@
+#ifndef TRANSLATOR_H
+#define TRANSLATOR_H
+
 #include <string>
 #include <map>
 #include <tuple>
@@ -18,3 +21,5 @@ namespace syssoft1 {
         void secondPass();
     };
 }
+
+#endif // TRANSLATOR_H

@@ -1,3 +1,6 @@
+#ifndef UICONTROLLER_H
+#define UICONTROLLER_H
+
 #include <QObject>
 
 #include <string_view>
@@ -20,3 +23,5 @@ namespace syssoft1 {
         ~UIController();
     };
 }
+
+#endif // UICONTROLLER_H

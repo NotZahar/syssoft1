@@ -7,7 +7,7 @@ namespace syssoft1 {
     UIController::~UIController() {
     }
 
-    void UIController::sourceCodeWasGiven(const std::string_view _sourceCode) {
+    void UIController::sourceCodeWasGiven([[maybe_unused]] const std::string_view _sourceCode) {
 
     }
 }

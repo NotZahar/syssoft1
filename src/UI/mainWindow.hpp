@@ -1,3 +1,6 @@
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
+
 #include <QWidget>
 #include <QFile>
 
@@ -23,3 +26,5 @@ namespace syssoft1 {
         ~MainWindow();
     };
 }
+
+#endif // MAINWINDOW_H
