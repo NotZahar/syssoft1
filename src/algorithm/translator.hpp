@@ -10,8 +10,8 @@ namespace syssoft1 {
     private:
         std::map<std::string, std::tuple<int, int>> OCT;
         std::map<std::string, int> SNT;
-        [[maybe_unused]] int addressCounter;
-        [[maybe_unused]] int loadAddress;
+        int addressCounter;
+        int loadAddress;
 
     public:
         Translator();

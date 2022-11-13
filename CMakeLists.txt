@@ -14,10 +14,11 @@ find_package(Qt5 COMPONENTS Widgets Core REQUIRED)
 
 # Main Target
 add_executable(
-    ssoft
+    ssoft1
     src/main.cpp
     src/algorithm/translator.hpp src/algorithm/translator.cpp
     src/controllers/mainWindowC.hpp src/controllers/mainWindowC.cpp
+    src/errors/error.hpp src/errors/error.cpp
     src/UI/mainWindow.hpp src/UI/mainWindow.cpp
 )
 
@@ -32,11 +33,11 @@ target_include_directories(
     ${GTEST_INCLUDE_DIRS}
     "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
-target_link_libraries(ssoft PRIVATE Qt5::Widgets)
+target_link_libraries(ssoft1 PRIVATE Qt5::Widgets)
 target_link_libraries(tests PRIVATE ${GTEST_BOTH_LIBRARIES})
 
 target_compile_options(
-    ssoft PRIVATE
+    ssoft1 PRIVATE
     -Wall -Wextra -pedantic -Werror
 )
 
