@@ -3,10 +3,12 @@
 
 #include <QObject>
 
-#include <string_view>
+#include <regex>
+#include <iostream>
 
 #include "../algorithm/translator.hpp"
 #include "../UI/mainWindow.hpp"
+#include "../errors/error.hpp"
 
 namespace syssoft1 {
     class MainWindowC : public QObject {
@@ -14,16 +16,17 @@ namespace syssoft1 {
 
     private:
         MainWindow mainWindow;
-
-        std::string_view sourceCode;
         Translator translator;
-
-    public slots:
-        void sourceCodeWasGiven(const std::string_view _sourceCode);
 
     public:
         MainWindowC();
         ~MainWindowC();
+
+    private slots:
+       void firstPassWasBegun();
+    
+    private:
+        void initMainWindow();
     };
 }
 

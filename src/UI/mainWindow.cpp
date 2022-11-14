@@ -1,5 +1,5 @@
 #include "mainWindow.hpp"
-// TODO: перенести в контроллер подгрузку из файла
+
 namespace syssoft1 {
     MainWindow::MainWindow(QWidget* _parent) :
         QWidget(_parent),
@@ -16,9 +16,9 @@ namespace syssoft1 {
         SNTTableView(new QTableView()),
         sourceEdit(new QTextEdit()),
         auxiliaryEdit(new QTextEdit()),
-        firstPassErrorsEdit(new QTextEdit),
-        secondPassErrorsEdit(new QTextEdit),
-        OBMEdit(new QTextEdit),
+        firstPassErrorsEdit(new QTextEdit()),
+        secondPassErrorsEdit(new QTextEdit()),
+        OBMEdit(new QTextEdit()),
         firstPassBtn(new QPushButton("Первый проход")),
         secondPassBtn(new QPushButton("Второй проход")),
         sourceLabel(new QLabel("Исходный код")),
@@ -31,6 +31,8 @@ namespace syssoft1 {
         initialWindowGeometryWidth(1000),
         initialWindowGeometryHeight(700)
     {
+        QObject::connect(firstPassBtn, &QPushButton::clicked, this, &MainWindow::firstPassBtnWasPushed);
+
         this->setGeometry(0, 0, initialWindowGeometryWidth, initialWindowGeometryHeight);
         this->setWindowTitle("Двухпросмотровый ассемблер в абсолютном формате");
         this->setWindowFlags(this->windowFlags()
@@ -74,69 +76,6 @@ namespace syssoft1 {
         firstPassErrorsEdit->setMinimumHeight((0.8 / 5.0) * initialWindowGeometryHeight);
         OBMEdit->setMinimumHeight((2.7 / 5.0) * initialWindowGeometryHeight);
 
-        const QStringList OCTLabels = {"МКОП", "ДКОП", "Длина"};
-        OCTTableModel->setHorizontalHeaderLabels(OCTLabels);
-        OCTTableView->setModel(OCTTableModel);
-        for (int i = 0; i < OCTLabels.size(); ++i) OCTTableView->horizontalHeader()->setSectionResizeMode(i, QHeaderView::Stretch);
-        
-        QFile sourceFile("/home/zahar/Documents/syssoft/syssoft1/src/sourceExample/source.syssoft1");
-        QFile OCTFile("/home/zahar/Documents/syssoft/syssoft1/src/sourceExample/oct.syssoft1");
-        
-        if (sourceFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            QString startSource = "";
-            while (!sourceFile.atEnd()) {
-                startSource += sourceFile.readLine();
-            }
-
-            sourceEdit->setText(startSource);   
-        } else {
-            QMessageBox::critical(nullptr, "Ошибка", Error::errorMessages.at(Error::error::fileCannotBeOpened));
-        }
-        
-        for (int row = 0; row < 45; ++row) { // maximum number of commands
-            for (int column = 0; column < OCTLabels.size(); ++column) {
-                QStandardItem* cell = new QStandardItem("");
-                cell->setEditable(true);
-                OCTTableModel->setItem(row, column, cell);
-            }
-        }
-
-        if (OCTFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            const std::regex rowOCTRegex("^ *\\.[a-z]+[0-9]* +\\.\\.(0x[0-9]{1,9}|[0-9]{1,9}) +\\.\\.\\.[0-9]{1,9} *$");
-            const std::regex MOCRegex("\\.[a-z]+[0-9]*");
-            const std::regex BOCRegex("\\.\\.(0x[0-9]{1,9}|[0-9]{1,9})");
-            const std::regex lengthRegex("\\.\\.\\.[0-9]{1,9}");
-            std::smatch rawMOC;
-            std::smatch rawBOC;
-            std::smatch rawLength;
-            int i = 0;
-            while (!OCTFile.atEnd()) {
-                std::string row = OCTFile.readLine().toStdString();
-                if (row.empty()) {
-                    continue;
-                }
-
-                if (row[row.size() - 1] == '\n') {
-                    row = row.substr(0, row.size() - 1);
-                }
-
-                if (!std::regex_match(row, rowOCTRegex)) {
-                    continue;
-                }
-
-                std::regex_search(row, rawMOC, MOCRegex);
-                std::regex_search(row, rawBOC, BOCRegex);
-                std::regex_search(row, rawLength, lengthRegex);
-
-                OCTTableModel->item(i, 0)->setText(QString::fromStdString(rawMOC.str().substr(1)));
-                OCTTableModel->item(i, 1)->setText(QString::fromStdString(rawBOC.str().substr(2)));
-                OCTTableModel->item(i, 2)->setText(QString::fromStdString(rawLength.str().substr(3)));
-                ++i;
-            }   
-        } else {
-            QMessageBox::critical(nullptr, "Ошибка", Error::errorMessages.at(Error::error::fileCannotBeOpened));
-        }
-
         leftLayout->addWidget(sourceLabel);
         leftLayout->addWidget(sourceEdit);
         leftLayout->addWidget(OCTLabel);
@@ -163,5 +102,21 @@ namespace syssoft1 {
 
     MainWindow::~MainWindow() {
 
+    }
+
+    QStandardItemModel* MainWindow::getOCTTableModel() {
+        return OCTTableModel;
+    }
+
+    QTableView* MainWindow::getOCTTableView() {
+        return OCTTableView;
+    }
+
+    QTextEdit* MainWindow::getSourceEdit() {
+        return sourceEdit;
+    }
+
+    void MainWindow::firstPassBtnWasPushed(bool) {
+        emit firstPassIsBegun();
     }
 }

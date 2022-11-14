@@ -10,8 +10,9 @@ namespace syssoft1 {
 
     }
 
-    void Translator::firstPass() {
-
+    void Translator::firstPass(std::string _source, std::map<std::string, std::tuple<int, int>> _OCT) {
+        _source = "";
+        _OCT = {};
     }
 
     void Translator::secondPass() {

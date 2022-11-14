@@ -17,11 +17,10 @@
 #include <QLabel>
 #include <QFont>
 
-#include <string_view>
-#include <iostream>
-#include <regex>
-
-#include "../errors/error.hpp"
+#include <map>
+#include <string>
+#include <tuple>
+#include <utility>
 
 namespace syssoft1 {
     class MainWindow : public QWidget {
@@ -57,14 +56,21 @@ namespace syssoft1 {
         const int initialWindowGeometryWidth;
         const int initialWindowGeometryHeight;
 
+    private slots:
+        void firstPassBtnWasPushed(bool);
+
     signals:
-        void sourceCodeIsGiven(const std::string_view _sourceCode);
+        void firstPassIsBegun();
 
     public:
         MainWindow() = delete;
         explicit MainWindow(QWidget* _parent = nullptr);
 
         ~MainWindow();
+
+        QStandardItemModel* getOCTTableModel();
+        QTableView* getOCTTableView();
+        QTextEdit* getSourceEdit();
     };
 }
 
