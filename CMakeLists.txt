@@ -9,15 +9,17 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-find_package(GTest REQUIRED)
 find_package(Qt5 COMPONENTS Widgets Core REQUIRED)
+find_package(GTest REQUIRED)
 
 # Main Target
 add_executable(
     ssoft1
     src/main.cpp
-    src/algorithm/translator.hpp src/algorithm/translator.cpp
+    src/algorithm/translator.hpp src/algorithm/translator.cpp 
+    src/algorithm/convertNumber.hpp src/algorithm/convertNumber.cpp
     src/controllers/mainWindowC.hpp src/controllers/mainWindowC.cpp
+    src/controllers/validate.hpp src/controllers/validate.cpp
     src/errors/error.hpp src/errors/error.cpp
     src/UI/mainWindow.hpp src/UI/mainWindow.cpp
 )
@@ -31,7 +33,7 @@ add_executable(
 target_include_directories(
     tests PRIVATE 
     ${GTEST_INCLUDE_DIRS}
-    "${CMAKE_CURRENT_SOURCE_DIR}/src")
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/controllers")
 
 target_link_libraries(ssoft1 PRIVATE Qt5::Widgets)
 target_link_libraries(tests PRIVATE ${GTEST_BOTH_LIBRARIES})

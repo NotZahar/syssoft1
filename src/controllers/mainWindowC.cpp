@@ -7,7 +7,7 @@ namespace syssoft1 {
     {
         QObject::connect(&mainWindow, &MainWindow::firstPassIsBegun, this, &MainWindowC::firstPassWasBegun);
 
-        initMainWindow();
+        fillOutTheWindowWithInitialData();
         mainWindow.show();
     }
 
@@ -15,7 +15,7 @@ namespace syssoft1 {
 
     }
 
-    void MainWindowC::initMainWindow() {
+    void MainWindowC::fillOutTheWindowWithInitialData() {
         QStandardItemModel* OCTTableModel = mainWindow.getOCTTableModel();
         QTableView* OCTTableView = mainWindow.getOCTTableView();
         QTextEdit* sourceEdit = mainWindow.getSourceEdit();
@@ -48,10 +48,10 @@ namespace syssoft1 {
         }
 
         if (OCTFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            const std::regex rowOCTRegex("^ *\\.[a-z]+[0-9]* +\\.\\.(0x[0-9]{1,9}|[0-9]{1,9}) +\\.\\.\\.[0-9]{1,9} *$");
-            const std::regex MOCRegex("\\.[a-z]+[0-9]*");
-            const std::regex BOCRegex("\\.\\.(0x[0-9]{1,9}|[0-9]{1,9})");
-            const std::regex lengthRegex("\\.\\.\\.[0-9]{1,9}");
+            const std::regex rowOCTRegex("^ *\\." + Validate::MOCRegexStr + " +\\.\\." + Validate::BOCRegexStr + " +\\.\\.\\." + Validate::lengthRegexStr + " *$");
+            const std::regex MOCRegex("\\." + Validate::MOCRegexStr);
+            const std::regex BOCRegex("\\.\\." + Validate::BOCRegexStr);
+            const std::regex lengthRegex("\\.\\.\\." + Validate::lengthRegexStr);
             std::smatch rawMOC;
             std::smatch rawBOC;
             std::smatch rawLength;
@@ -85,23 +85,51 @@ namespace syssoft1 {
     }
 
     void MainWindowC::firstPassWasBegun() {
-        std::map<QString, std::tuple<QString, QString>> OCT;
+        std::map<std::string, std::tuple<int, int>> OCT;
         QStandardItemModel* OCTTableModel = mainWindow.getOCTTableModel();
-        [[maybe_unused]] QTextEdit* sourceEdit = mainWindow.getSourceEdit();
+        QTextEdit* sourceEdit = mainWindow.getSourceEdit();
 
         int rowCount = OCTTableModel->rowCount();
         for (int i = 0; i < rowCount; ++i) {
-            QString MOC = OCTTableModel->item(i, 0)->text();
-            QString BOC = OCTTableModel->item(i, 1)->text(); 
-            QString length = OCTTableModel->item(i, 2)->text();
+            std::string MOC = OCTTableModel->item(i, 0)->text().toStdString();
+            std::string BOC = OCTTableModel->item(i, 1)->text().toStdString(); 
+            std::string length = OCTTableModel->item(i, 2)->text().toStdString();
 
-            if (MOC.isEmpty() || BOC.isEmpty() || length.isEmpty()) {
+            if (!Validate::containsMOC(MOC) 
+                || !Validate::containsBOC(BOC)
+                || !Validate::containsLength(length)) {
                 continue;
-            } else {
-                OCT.insert({MOC, {BOC, length}});
             }
+
+            std::smatch MOCMatch;
+            std::smatch BOCMatch;
+            std::smatch lengthMatch;
+            std::regex_search(MOC, MOCMatch, std::regex(Validate::MOCRegexStr));
+            std::regex_search(BOC, BOCMatch, std::regex(Validate::BOCRegexStr));
+            std::regex_search(length, lengthMatch, std::regex(Validate::lengthRegexStr));
+            
+            std::string BOCStr = BOCMatch.str();
+            std::string lengthStr = lengthMatch.str();
+
+            int BOCNum;
+            int lengthNum;
+            if (std::regex_match(BOCStr, std::regex(Validate::hexNumberRegexStr))) {
+                BOCStr = BOCStr.substr(2);
+                BOCNum = BOCStr;
+            } else { // if decimal
+                BOCNum = BOCStr;
+            }
+
+            if (std::regex_match(lengthStr, std::regex(Validate::hexNumberRegexStr))) {
+                lengthStr = lengthStr.substr(2);
+                lengthNum = lengthStr;
+            } else { // if decimal
+                lengthNum = lengthStr;
+            }
+
+            OCT.insert({MOCMatch.str(), {BOCNum, lengthNum}});
         }
 
-        // TODO: начинать здесь 
+        translator.firstPass(sourceEdit->toPlainText().toStdString(), OCT);
     }
 }
