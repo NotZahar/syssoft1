@@ -111,21 +111,9 @@ namespace syssoft1 {
             std::string BOCStr = BOCMatch.str();
             std::string lengthStr = lengthMatch.str();
 
-            int BOCNum;
-            int lengthNum;
-            if (std::regex_match(BOCStr, std::regex(Validate::hexNumberRegexStr))) {
-                BOCStr = BOCStr.substr(2);
-                BOCNum = BOCStr;
-            } else { // if decimal
-                BOCNum = BOCStr;
-            }
-
-            if (std::regex_match(lengthStr, std::regex(Validate::hexNumberRegexStr))) {
-                lengthStr = lengthStr.substr(2);
-                lengthNum = lengthStr;
-            } else { // if decimal
-                lengthNum = lengthStr;
-            }
+            bool ok;
+            int BOCNum = QString::fromStdString(BOCStr).toInt(&ok, 0);
+            int lengthNum = QString::fromStdString(lengthStr).toInt(&ok, 0);
 
             OCT.insert({MOCMatch.str(), {BOCNum, lengthNum}});
         }
