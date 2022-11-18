@@ -85,7 +85,7 @@ namespace syssoft1 {
     }
 
     void MainWindowC::firstPassWasBegun() {
-        std::map<std::string, std::tuple<int, int>> OCT;
+        std::map<QString, std::tuple<int, int>> OCT;
         QStandardItemModel* OCTTableModel = mainWindow.getOCTTableModel();
         QTextEdit* sourceEdit = mainWindow.getSourceEdit();
 
@@ -108,16 +108,16 @@ namespace syssoft1 {
             std::regex_search(BOC, BOCMatch, std::regex(Validate::BOCRegexStr));
             std::regex_search(length, lengthMatch, std::regex(Validate::lengthRegexStr));
             
-            std::string BOCStr = BOCMatch.str();
-            std::string lengthStr = lengthMatch.str();
+            QString BOCStr = QString::fromStdString(BOCMatch.str());
+            QString lengthStr = QString::fromStdString(lengthMatch.str());
 
             bool ok;
-            int BOCNum = QString::fromStdString(BOCStr).toInt(&ok, 0);
-            int lengthNum = QString::fromStdString(lengthStr).toInt(&ok, 0);
+            int BOCNum = BOCStr.toInt(&ok, 0);
+            int lengthNum = lengthStr.toInt(&ok, 0);
 
-            OCT.insert({MOCMatch.str(), {BOCNum, lengthNum}});
+            OCT.insert({QString::fromStdString(MOCMatch.str()), {BOCNum, lengthNum}});
         }
 
-        translator.firstPass(sourceEdit->toPlainText().toStdString(), OCT);
+        translator.firstPass(sourceEdit->toPlainText(), OCT);
     }
 }

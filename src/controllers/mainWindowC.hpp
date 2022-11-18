@@ -5,12 +5,11 @@
 #include <QDebug>
 
 #include <regex>
-#include <iostream>
 
 #include "../algorithm/translator.hpp"
 #include "../UI/mainWindow.hpp"
 #include "../errors/error.hpp"
-#include "validate.hpp"
+#include "../middleware/validate.hpp"
 
 namespace syssoft1 {
     class MainWindowC : public QObject {
@@ -20,15 +19,15 @@ namespace syssoft1 {
         MainWindow mainWindow;
         Translator translator;
 
-    public:
-        MainWindowC();
-        ~MainWindowC();
+    private:
+        void fillOutTheWindowWithInitialData();
 
     private slots:
        void firstPassWasBegun();
-    
-    private:
-        void fillOutTheWindowWithInitialData();
+
+    public:
+        MainWindowC();
+        ~MainWindowC();
     }; 
 }
 

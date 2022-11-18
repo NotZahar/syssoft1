@@ -17,9 +17,8 @@ add_executable(
     ssoft1
     src/main.cpp
     src/algorithm/translator.hpp src/algorithm/translator.cpp 
-    src/algorithm/convertNumber.hpp src/algorithm/convertNumber.cpp
     src/controllers/mainWindowC.hpp src/controllers/mainWindowC.cpp
-    src/controllers/validate.hpp src/controllers/validate.cpp
+    src/middleware/validate.hpp src/middleware/validate.cpp
     src/errors/error.hpp src/errors/error.cpp
     src/UI/mainWindow.hpp src/UI/mainWindow.cpp
 )
@@ -33,10 +32,11 @@ add_executable(
 target_include_directories(
     tests PRIVATE 
     ${GTEST_INCLUDE_DIRS}
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/controllers")
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/middleware"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/algorithm")
 
 target_link_libraries(ssoft1 PRIVATE Qt5::Widgets)
-target_link_libraries(tests PRIVATE ${GTEST_BOTH_LIBRARIES})
+target_link_libraries(tests PRIVATE ${GTEST_BOTH_LIBRARIES} Qt5::Widgets)
 
 target_compile_options(
     ssoft1 PRIVATE

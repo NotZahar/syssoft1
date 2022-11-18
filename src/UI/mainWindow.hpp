@@ -5,7 +5,6 @@
 #include <QString>
 #include <QFile>
 #include <QFileInfo>
-#include <QDebug>
 #include <QPushButton>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -68,6 +67,7 @@ namespace syssoft1 {
 
         ~MainWindow();
 
+    public:
         QStandardItemModel* getOCTTableModel();
         QTableView* getOCTTableView();
         QTextEdit* getSourceEdit();

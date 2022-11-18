@@ -1,3 +1,6 @@
+#ifndef VALIDATE_H
+#define VALIDATE_H
+
 #include <regex>
 #include <string>
 
@@ -15,9 +18,11 @@ namespace syssoft1 {
         Validate() = default;
         ~Validate() = default;
 
-        static bool containsNumber(const std::string& numberCandidate);
-        static bool containsMOC(const std::string& MOCCandidate);
-        static bool containsBOC(const std::string& BOCCandidate);
-        static bool containsLength(const std::string& lengthCandidate);
+        static bool containsNumber(const std::string& _numberCandidate);
+        static bool containsMOC(const std::string& _MOCCandidate);
+        static bool containsBOC(const std::string& _BOCCandidate);
+        static bool containsLength(const std::string& _lengthCandidate);
     };
 }
+
+#endif // VALIDATE_H
