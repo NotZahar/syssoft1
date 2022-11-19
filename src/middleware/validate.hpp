@@ -5,8 +5,7 @@
 #include <string>
 
 namespace syssoft1 {
-    class Validate {
-    public:
+    struct Validate {
         static inline const std::string decNumberRegexStr = "[0-9]{1,9}";
         static inline const std::string hexNumberRegexStr = "0x[0-9a-f]{1,7}";
         static inline const std::string numberRegexStr = "(" + hexNumberRegexStr + "|" + decNumberRegexStr + ")";
@@ -14,7 +13,6 @@ namespace syssoft1 {
         static inline const std::string BOCRegexStr = numberRegexStr;
         static inline const std::string lengthRegexStr = numberRegexStr;
 
-    public:
         Validate() = default;
         ~Validate() = default;
 

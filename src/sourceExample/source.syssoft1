@@ -3,7 +3,7 @@ prog1 start 100
 a1 resb 10
 a2 resw 20
 b1 word 4096
-b2 byte x'2F4C008A'
+b2 byte x'2f4c008a'
 b3 byte c'Hello!'
 b4 byte 128
 l1 loadr1 b1

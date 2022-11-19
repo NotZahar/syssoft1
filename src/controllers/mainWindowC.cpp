@@ -118,6 +118,6 @@ namespace syssoft1 {
             OCT.insert({QString::fromStdString(MOCMatch.str()), {BOCNum, lengthNum}});
         }
 
-        translator.firstPass(sourceEdit->toPlainText(), OCT);
+        translator.firstPass(sourceEdit->toPlainText(), OCT); // TODO: add try
     }
 }

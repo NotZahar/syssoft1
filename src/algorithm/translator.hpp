@@ -12,6 +12,7 @@
 #include <tuple>
 
 #include "../middleware/validate.hpp"
+#include "../errors/error.hpp"
 
 namespace syssoft1 {
     class Translator {
@@ -25,10 +26,14 @@ namespace syssoft1 {
         const QRegularExpression whitespacesSplitRegex;
         const QRegularExpression labelRegex;
         const QRegularExpression MOCRegex;
+        const QRegularExpression directiveRegex;
         const QRegularExpression operandsRegex;
 
     private:
         QStringList deleteEmptyTokens(const QStringList& _tokens);
+        bool isLabel(const QString& _token);
+        bool isMOC(const QString& _token);
+        bool isDirective(const QString& _token);
 
     public:
         Translator();

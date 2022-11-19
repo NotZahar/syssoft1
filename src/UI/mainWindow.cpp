@@ -43,6 +43,8 @@ namespace syssoft1 {
         this->setAutoFillBackground(true); 
         this->setPalette(palette);
 
+        secondPassBtn->setEnabled(false);
+
         const QFont generalFont("Ubuntu Mono", 14);
         const QFont labelFont("Ubuntu Mono", 12);
         const QFont btnFont("Ubuntu Mono", 14, QFont::Bold);
