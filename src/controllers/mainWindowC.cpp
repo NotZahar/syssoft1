@@ -108,6 +108,7 @@ namespace syssoft1 {
             std::regex_search(BOC, BOCMatch, std::regex(Validate::BOCRegexStr));
             std::regex_search(length, lengthMatch, std::regex(Validate::lengthRegexStr));
             
+            QString MOCStr = QString::fromStdString(MOCMatch.str());
             QString BOCStr = QString::fromStdString(BOCMatch.str());
             QString lengthStr = QString::fromStdString(lengthMatch.str());
 
@@ -115,7 +116,15 @@ namespace syssoft1 {
             int BOCNum = BOCStr.toInt(&ok, 0);
             int lengthNum = lengthStr.toInt(&ok, 0);
 
-            OCT.insert({QString::fromStdString(MOCMatch.str()), {BOCNum, lengthNum}});
+            // TODO: чекать длину команды: 1-4
+            // TODO: чекать дв. код: 1 байт - 2 шестн. числа
+
+            if (OCT.find(MOCStr) != OCT.end()) { // TODO: еще проверить на то что дв код - уникальный
+                QMessageBox::critical(nullptr, "Ошибка", Error::errorMessages.at(Error::error::redefiningMOC));
+                return;
+            }
+
+            OCT.insert({MOCStr, {BOCNum, lengthNum}});
         }
 
         translator.firstPass(sourceEdit->toPlainText(), OCT); // TODO: add try

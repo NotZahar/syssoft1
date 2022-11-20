@@ -15,6 +15,9 @@ namespace syssoft1 {
 
         enum class error : int {
             fileCannotBeOpened,
+            redefiningMOC,
+            startDirectiveWasExpected,
+            thereAreNotEnoughStartAndEndDirectives,
             labelOrMOCOrDirectiveWasExpected,
             MOCOrDirectiveWasExprcted,
             MOCWasExpected
@@ -22,8 +25,12 @@ namespace syssoft1 {
 
         static inline const std::map<error, const QString> errorMessages {
             { error::fileCannotBeOpened, "Файл не может быть открыт" },
+            { error::redefiningMOC, "Переопределение МКОП" },
             { error::labelOrMOCOrDirectiveWasExpected, "Ожидается: метка, или МКОП, или директива" },
-            { error::MOCWasExpected, "Ожидается: МКОП" }
+            { error::MOCWasExpected, "Ожидается: МКОП" },
+            { error::MOCOrDirectiveWasExprcted, "Ожидается: МКОП или директива" },
+            { error::startDirectiveWasExpected, "Ожидается: start" },
+            { error::thereAreNotEnoughStartAndEndDirectives, "Не хватает: start или end" }
         };
     };
 
