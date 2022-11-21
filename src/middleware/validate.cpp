@@ -14,10 +14,14 @@ namespace syssoft1 {
     }
 
     bool Validate::containsBOC(const std::string& _BOCCandidate) {
-        return containsNumber(_BOCCandidate);
+        const std::regex BOCRegex("^ *" + BOCRegexStr + " *$");
+
+        return std::regex_match(_BOCCandidate, BOCRegex);
     }
 
     bool Validate::containsLength(const std::string& _lengthCandidate) {
-        return containsNumber(_lengthCandidate);
+        const std::regex lengthRegex("^ *" + lengthRegexStr + " *$"); 
+
+        return std::regex_match(_lengthCandidate, lengthRegex);
     }
 }

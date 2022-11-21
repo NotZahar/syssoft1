@@ -10,8 +10,8 @@ namespace syssoft1 {
         static inline const std::string hexNumberRegexStr = "0x[0-9a-f]{1,7}";
         static inline const std::string numberRegexStr = "(" + hexNumberRegexStr + "|" + decNumberRegexStr + ")";
         static inline const std::string MOCRegexStr = "[a-z]+[0-9]*";
-        static inline const std::string BOCRegexStr = numberRegexStr;
-        static inline const std::string lengthRegexStr = numberRegexStr;
+        static inline const std::string BOCRegexStr = "(0x[0-9a-f]{2}|[0-9]{1,3})";
+        static inline const std::string lengthRegexStr = "(0x[1-4]{1}|[1-4]{1})";
 
         Validate() = default;
         ~Validate() = default;

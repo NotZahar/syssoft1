@@ -116,13 +116,16 @@ namespace syssoft1 {
             int BOCNum = BOCStr.toInt(&ok, 0);
             int lengthNum = lengthStr.toInt(&ok, 0);
 
-            // TODO: чекать длину команды: 1-4
-            // TODO: чекать дв. код: 1 байт - 2 шестн. числа
-
-            if (OCT.find(MOCStr) != OCT.end()) { // TODO: еще проверить на то что дв код - уникальный
+            if (BOCNum > 255) {
+                continue;
+            }
+ 
+            if (OCT.find(MOCStr) != OCT.end()) { 
                 QMessageBox::critical(nullptr, "Ошибка", Error::errorMessages.at(Error::error::redefiningMOC));
                 return;
             }
+
+            // TODO: еще проверить на то что дв код - уникальный
 
             OCT.insert({MOCStr, {BOCNum, lengthNum}});
         }
