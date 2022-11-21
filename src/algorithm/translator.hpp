@@ -40,7 +40,7 @@ namespace syssoft1 {
         bool isMOC(const QString& _token);
         bool isDirective(const QString& _token);
         bool hasEndDirective(const QStringList& _tokens);
-        std::tuple<> processFirstNonEmptyRow(const QString& _row);
+        std::tuple<QString, int> processFirstNonEmptyRow(const QString& _row);
 
     public:
         Translator();

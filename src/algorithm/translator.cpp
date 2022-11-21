@@ -53,7 +53,8 @@ namespace syssoft1 {
             }
 
             if (firstNonEmptyRowNumber == i) { // we are on the first non-empty row
-                processFirstNonEmptyRow(sourceRow);
+                const auto [programName, loadAddress] = processFirstNonEmptyRow(sourceRow);
+                // TODO: here
             }
 
             const int numberOftokens = tokens.size();
@@ -152,16 +153,14 @@ namespace syssoft1 {
         return false;
     }
 
-    QString Translator::processFirstNonEmptyRow(const QString& _row) {
+    std::tuple<QString, int> Translator::processFirstNonEmptyRow(const QString& _row) {
         QRegularExpressionMatch startRowCandidateMatch = startRowRegex.match(_row);
         
         if (!startRowCandidateMatch.hasMatch()) {
             throw Error::error::startDirectiveWasExpected;
         }
 
-        QString programName = startRowCandidateMatch.captured(1);
-        QString loadAddressStr = startRowCandidateMatch.captured(3);
         bool ok;
-        loadAddress = loadAddressStr.toInt(&ok, 0);
+        return std::make_tuple(startRowCandidateMatch.captured(1), startRowCandidateMatch.captured(3).toInt(&ok, 0));
     }
 }
