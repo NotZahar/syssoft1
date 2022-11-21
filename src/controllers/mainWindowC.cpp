@@ -25,8 +25,8 @@ namespace syssoft1 {
         OCTTableView->setModel(OCTTableModel);
         for (int i = 0; i < OCTLabels.size(); ++i) OCTTableView->horizontalHeader()->setSectionResizeMode(i, QHeaderView::Stretch);
         
-        QFile sourceFile("/home/zahar/Documents/syssoft/syssoft1/src/sourceExample/source.syssoft1");
-        QFile OCTFile("/home/zahar/Documents/syssoft/syssoft1/src/sourceExample/oct.syssoft1");
+        QFile sourceFile("/home/zahar/Документы/syssoft/syssoft1/src/sourceExample/source.syssoft1");
+        QFile OCTFile("/home/zahar/Документы/syssoft/syssoft1/src/sourceExample/oct.syssoft1");
         
         if (sourceFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
             QString startSource = "";
@@ -120,12 +120,18 @@ namespace syssoft1 {
                 continue;
             }
  
-            if (OCT.find(MOCStr) != OCT.end()) { 
-                QMessageBox::critical(nullptr, "Ошибка", Error::errorMessages.at(Error::error::redefiningMOC));
-                return;
-            }
+            for (const auto& OCTRow : OCT) {
+                if (MOCStr == OCTRow.first) {
+                    QMessageBox::critical(nullptr, "Ошибка", Error::errorMessages.at(Error::error::redefiningMOC));
+                    return;
+                }
 
-            // TODO: еще проверить на то что дв код - уникальный
+                const auto& [BOCP, lengthP] = OCTRow.second;
+                if (BOCNum == BOCP) {
+                    QMessageBox::critical(nullptr, "Ошибка", Error::errorMessages.at(Error::error::redefiningBOC));
+                    return;
+                }
+            }
 
             OCT.insert({MOCStr, {BOCNum, lengthNum}});
         }

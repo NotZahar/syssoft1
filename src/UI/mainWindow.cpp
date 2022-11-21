@@ -29,7 +29,7 @@ namespace syssoft1 {
         OBMLabel(new QLabel("Выходной объектный модуль")),
         secondPassErrorsLabel(new QLabel("Ошибки второго прохода")),
         initialWindowGeometryWidth(1000),
-        initialWindowGeometryHeight(700)
+        initialWindowGeometryHeight(600)
     {
         QObject::connect(firstPassBtn, &QPushButton::clicked, this, &MainWindow::firstPassBtnWasPushed);
 

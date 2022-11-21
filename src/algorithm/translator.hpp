@@ -22,8 +22,6 @@ namespace syssoft1 {
         const int impossibleNonnegativeIntegerValue;
         int addressCounter;
         int loadAddress;
-        int rowNumberThatHasStartDirective;
-        int rowNumberThatHasEndDirective;
         int firstNonEmptyRowNumber;
 
         const QRegularExpression whitespacesSplitRegex;
@@ -31,7 +29,7 @@ namespace syssoft1 {
         const QRegularExpression MOCRegex;
         const QRegularExpression directiveRegex;
         const QRegularExpression operandsRegex;
-        const QRegularExpression startDirectiveRegex;
+        const QRegularExpression startRowRegex;
         const QRegularExpression endDirectiveRegex;
 
     private:
@@ -39,8 +37,8 @@ namespace syssoft1 {
         bool isLabel(const QString& _token);
         bool isMOC(const QString& _token);
         bool isDirective(const QString& _token);
-        bool hasStartDirective(const QStringList& _tokens);
         bool hasEndDirective(const QStringList& _tokens);
+        void processFirstNonEmptyRow(const QString& _row);
 
     public:
         Translator();

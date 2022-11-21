@@ -15,15 +15,13 @@ namespace syssoft1 {
         impossibleNonnegativeIntegerValue(-1),
         addressCounter(impossibleNonnegativeIntegerValue),
         loadAddress(impossibleNonnegativeIntegerValue),
-        rowNumberThatHasStartDirective(impossibleNonnegativeIntegerValue),
-        rowNumberThatHasEndDirective(impossibleNonnegativeIntegerValue),
         firstNonEmptyRowNumber(impossibleNonnegativeIntegerValue),
         whitespacesSplitRegex(" +"),
         labelRegex("^[a-z\\?\\.@\\_\\$]+[0-9]*$"),
         MOCRegex("^[a-z]+[0-9]*$"),
         directiveRegex("^[a-z]+$"),
-        operandsRegex("^(0x[0-9a-f]{1,7}|[0-9]{1,9}|x'[0-9a-f]+'|c'[a-zA-Z0-9\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\=\\+\\_\\№\\;\\:\\?]+'|[a-z\\?\\.@\\_\\$]+[0-9]*),?$"),
-        startDirectiveRegex("^start$"),
+        operandsRegex("^(0x[0-9a-f]{1,7}|[0-9]{1,9}|x'[0-9a-f]{1,255}'|c'[a-zA-Z0-9\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\=\\+\\_\\№\\;\\:\\?]{1,127}'|[a-z\\?\\.@\\_\\$]+[0-9]*),?$"),
+        startRowRegex("^ *[a-zA-Z0-9\\_]+ +start +(0x[0-9a-f]{1,6}|[0-9]{1,7}) *$"),
         endDirectiveRegex("^end$")
     {
 
@@ -42,7 +40,8 @@ namespace syssoft1 {
         if (numberOfRows == 1) throw Error::error::thereAreNotEnoughStartAndEndDirectives;
 
         for (int i = 0; i < numberOfRows; ++i) {
-            QStringList allTokens = sourceRows[i].split(whitespacesSplitRegex);
+            QString sourceRow = sourceRows[i];
+            QStringList allTokens = sourceRow.split(whitespacesSplitRegex);
             QStringList tokens = deleteEmptyTokens(allTokens);
 
             if (tokens.empty()) continue;
@@ -51,12 +50,8 @@ namespace syssoft1 {
                 firstNonEmptyRowNumber = i; // set number of first non-empty row
             }
 
-            if (firstNonEmptyRowNumber == i) { // we are on the first row
-                if (!hasStartDirective(tokens)) { // TODO: переделать, нужно распарсить прямо здесь и посмотреть есть ли АЗ
-                    throw Error::error::startDirectiveWasExpected;
-                }
-
-                rowNumberThatHasStartDirective = i;
+            if (firstNonEmptyRowNumber == i) { // we are on the first non-empty row
+                processFirstNonEmptyRow(sourceRow);
             }
 
             const int numberOftokens = tokens.size();
@@ -67,7 +62,7 @@ namespace syssoft1 {
                 bool IS_DIRECTIVE = isDirective(token);
                 
                 if (!IS_MOC && !IS_DIRECTIVE) {
-                    throw ErrorData<QString>(sourceRows[i], Error::error::MOCOrDirectiveWasExprcted);
+                    throw ErrorData<QString>(sourceRow, Error::error::MOCOrDirectiveWasExprcted);
                 }
 
                 if (IS_MOC) {
@@ -145,16 +140,6 @@ namespace syssoft1 {
         return directivesList.find(_token) != directivesList.end();
     }
 
-    bool Translator::hasStartDirective(const QStringList& _tokens) {
-        for (const auto& token : _tokens) {
-            if (startDirectiveRegex.match(token).hasMatch()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     bool Translator::hasEndDirective(const QStringList& _tokens) {
         for (const auto& token : _tokens) {
             if (endDirectiveRegex.match(token).hasMatch()) {
@@ -163,5 +148,18 @@ namespace syssoft1 {
         }
 
         return false;
+    }
+
+    void Translator::processFirstNonEmptyRow(const QString& _row) {
+        QRegularExpressionMatch startRowCandidateMatch = startRowRegex.match(_row);
+        
+        if (!startRowCandidateMatch.hasMatch()) {
+            throw Error::error::startDirectiveWasExpected;
+        }
+
+        QString programName = startRowCandidateMatch.captured(1);
+        QString loadAddressStr = startRowCandidateMatch.captured(3);
+        bool ok;
+        loadAddress = loadAddressStr.toInt(&ok, 0);
     }
 }
