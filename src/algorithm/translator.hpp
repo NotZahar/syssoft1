@@ -20,9 +20,11 @@ namespace syssoft1 {
         std::map<QString, int> SNT;
         const std::set<QString> directivesList;
         const int impossibleNonnegativeIntegerValue;
+        const QString impossibleProgramName;
         int addressCounter;
         int loadAddress;
         int firstNonEmptyRowNumber;
+        QString programName;
 
         const QRegularExpression whitespacesSplitRegex;
         const QRegularExpression labelRegex;
@@ -38,7 +40,7 @@ namespace syssoft1 {
         bool isMOC(const QString& _token);
         bool isDirective(const QString& _token);
         bool hasEndDirective(const QStringList& _tokens);
-        void processFirstNonEmptyRow(const QString& _row);
+        std::tuple<> processFirstNonEmptyRow(const QString& _row);
 
     public:
         Translator();

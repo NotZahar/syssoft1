@@ -13,9 +13,11 @@ namespace syssoft1 {
             "resw"
         },
         impossibleNonnegativeIntegerValue(-1),
+        impossibleProgramName(""),
         addressCounter(impossibleNonnegativeIntegerValue),
         loadAddress(impossibleNonnegativeIntegerValue),
         firstNonEmptyRowNumber(impossibleNonnegativeIntegerValue),
+        programName(impossibleProgramName),
         whitespacesSplitRegex(" +"),
         labelRegex("^[a-z\\?\\.@\\_\\$]+[0-9]*$"),
         MOCRegex("^[a-z]+[0-9]*$"),
@@ -150,7 +152,7 @@ namespace syssoft1 {
         return false;
     }
 
-    void Translator::processFirstNonEmptyRow(const QString& _row) {
+    QString Translator::processFirstNonEmptyRow(const QString& _row) {
         QRegularExpressionMatch startRowCandidateMatch = startRowRegex.match(_row);
         
         if (!startRowCandidateMatch.hasMatch()) {
