@@ -18,6 +18,7 @@ namespace syssoft1 {
             redefiningMOC,
             redefiningBOC,
             startDirectiveWasExpected,
+            incorrectFormatOfStartRow,
             thereAreNotEnoughStartAndEndDirectives,
             labelOrMOCOrDirectiveWasExpected,
             MOCOrDirectiveWasExprcted,
@@ -32,6 +33,7 @@ namespace syssoft1 {
             { error::MOCWasExpected, "Ожидается: МКОП" },
             { error::MOCOrDirectiveWasExprcted, "Ожидается: МКОП или директива" },
             { error::startDirectiveWasExpected, "Ожидается: start" },
+            { error::incorrectFormatOfStartRow, "Неверный формат первой строки" },
             { error::thereAreNotEnoughStartAndEndDirectives, "Не хватает: start или end" }
         };
     };

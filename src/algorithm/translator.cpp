@@ -12,6 +12,11 @@ namespace syssoft1 {
             "resb",
             "resw"
         },
+        intermediateRepresentation(),
+        maximumNumberOfCommandArgs(2),
+        maximumAddress(0xffffff),
+        maximumRecordLength(0xff),
+        maximumNumberOfHexadecimalDigitsForAddress(6),
         impossibleNonnegativeIntegerValue(-1),
         impossibleProgramName(""),
         addressCounter(impossibleNonnegativeIntegerValue),
@@ -23,7 +28,9 @@ namespace syssoft1 {
         MOCRegex("^[a-z]+[0-9]*$"),
         directiveRegex("^[a-z]+$"),
         operandsRegex("^(0x[0-9a-f]{1,7}|[0-9]{1,9}|x'[0-9a-f]{1,255}'|c'[a-zA-Z0-9\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\=\\+\\_\\№\\;\\:\\?]{1,127}'|[a-z\\?\\.@\\_\\$]+[0-9]*),?$"),
-        startRowRegex("^ *[a-zA-Z0-9\\_]+ +start +(0x[0-9a-f]{1,6}|[0-9]{1,7}) *$"),
+        programNameRegex("^[a-zA-Z\\_]+[0-9]*$"),
+        startDirectiveRegex("^start$"),
+        loadAddressRegex("^(0x[0-9a-f]{1,6}|[0-9]{1,7})$"),
         endDirectiveRegex("^end$")
     {
 
@@ -52,9 +59,12 @@ namespace syssoft1 {
                 firstNonEmptyRowNumber = i; // set number of first non-empty row
             }
 
-            if (firstNonEmptyRowNumber == i) { // we are on the first non-empty row
-                const auto [programName, loadAddress] = processFirstNonEmptyRow(sourceRow);
-                // TODO: here
+            if (i == firstNonEmptyRowNumber) { // we are on the first non-empty row
+                const auto [_programName, _loadAddress] = processFirstNonEmptyRow(tokens);
+                programName = _programName;
+                loadAddress = _loadAddress;
+                addressCounter = loadAddress;
+                continue;
             }
 
             const int numberOftokens = tokens.size();
@@ -69,7 +79,8 @@ namespace syssoft1 {
                 }
 
                 if (IS_MOC) {
-
+                    // TODO: МКОП -> ДКОП
+                    
                 }
 
                 if (IS_DIRECTIVE) {
@@ -153,14 +164,33 @@ namespace syssoft1 {
         return false;
     }
 
-    std::tuple<QString, int> Translator::processFirstNonEmptyRow(const QString& _row) {
-        QRegularExpressionMatch startRowCandidateMatch = startRowRegex.match(_row);
-        
-        if (!startRowCandidateMatch.hasMatch()) {
-            throw Error::error::startDirectiveWasExpected;
-        }
+    std::tuple<QString, int> Translator::processFirstNonEmptyRow(const QStringList& _tokens) {
+        if (_tokens.size() != 3) throw Error::error::incorrectFormatOfStartRow;
 
+        QRegularExpressionMatch programNameMatch = programNameRegex.match(_tokens[0]);
+        QRegularExpressionMatch startDirectiveMatch = startDirectiveRegex.match(_tokens[1]);
+        QRegularExpressionMatch loadAddressMatch = loadAddressRegex.match(_tokens[2]);
+        
+        if (!programNameMatch.hasMatch() 
+            || !startDirectiveMatch.hasMatch()
+            || !loadAddressMatch.hasMatch()) {
+            throw Error::error::incorrectFormatOfStartRow;
+        }
+        
         bool ok;
-        return std::make_tuple(startRowCandidateMatch.captured(1), startRowCandidateMatch.captured(3).toInt(&ok, 0));
+        return std::make_tuple(programNameMatch.captured(), loadAddressMatch.captured().toInt(&ok, 0));
+    }
+
+    QString Translator::decToHexStr(int _dec, int _numberOfDigits) {
+        QString resultHexStr;
+
+        QString hexStr = QString::number(_dec, 16);
+        const int lackOfZeros = _numberOfDigits - hexStr.size();
+        for (int i = 0; i < lackOfZeros; ++i) {
+            resultHexStr += "0";
+        }
+        resultHexStr += hexStr;
+
+        return resultHexStr;
     }
 }
