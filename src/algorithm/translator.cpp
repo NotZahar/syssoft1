@@ -17,6 +17,7 @@ namespace syssoft1 {
         maximumAddress(0xffffff),
         maximumRecordLength(0xff),
         maximumNumberOfHexadecimalDigitsForAddress(6),
+        maximumNumberOfHexadecimalDigitsForCommand(2),
         impossibleNonnegativeIntegerValue(-1),
         impossibleProgramName(""),
         addressCounter(impossibleNonnegativeIntegerValue),
@@ -79,17 +80,30 @@ namespace syssoft1 {
                 }
 
                 if (IS_MOC) {
-                    // TODO: МКОП -> ДКОП
+                    const auto [BOC, commandLength] = OCT.at(token);
+                    if (commandLength != 1) {
+                        throw ErrorData<QString>(sourceRow, Error::error::oneByteCommandWasExpected);
+                    }
                     
-                }
+                    intermediateRepresentation.push_back({
+                        "0x" + decToHexStr(addressCounter, maximumNumberOfHexadecimalDigitsForAddress),
+                        "0x" + decToHexStr(BOC, maximumNumberOfHexadecimalDigitsForCommand)
+                    });
 
-                if (IS_DIRECTIVE) {
-                    
+                    try {
+                        increaseAddressCounter(commandLength);
+                    } catch(Error::error e) {
+                        throw ErrorData<QString>(sourceRow, e);
+                    }
+                } else if (IS_DIRECTIVE) {
+                    throw ErrorData<QString>(sourceRow, Error::error::MOCWasExpected);
                 }
 
                 break;
             }
             case 2: {
+                
+
                 break;
             }
             case 3: {
@@ -97,6 +111,12 @@ namespace syssoft1 {
             } 
             default:
                 break;
+            }
+        }
+
+        for (const auto& v : intermediateRepresentation) {
+            for (const auto& s : v) {
+                qDebug() << s;
             }
         }
     }
@@ -192,5 +212,13 @@ namespace syssoft1 {
         resultHexStr += hexStr;
 
         return resultHexStr;
+    }
+
+    void Translator::increaseAddressCounter(int _commandLength) {
+        if (addressCounter + _commandLength > maximumAddress) {
+            throw Error::error::addressCounterOverflow;
+        }
+
+        addressCounter += _commandLength;
     }
 }

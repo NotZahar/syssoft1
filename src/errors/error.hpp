@@ -22,7 +22,9 @@ namespace syssoft1 {
             thereAreNotEnoughStartAndEndDirectives,
             labelOrMOCOrDirectiveWasExpected,
             MOCOrDirectiveWasExprcted,
-            MOCWasExpected
+            MOCWasExpected,
+            oneByteCommandWasExpected,
+            addressCounterOverflow
         };
 
         static inline const std::map<error, const QString> errorMessages {
@@ -34,7 +36,9 @@ namespace syssoft1 {
             { error::MOCOrDirectiveWasExprcted, "Ожидается: МКОП или директива" },
             { error::startDirectiveWasExpected, "Ожидается: start" },
             { error::incorrectFormatOfStartRow, "Неверный формат первой строки" },
-            { error::thereAreNotEnoughStartAndEndDirectives, "Не хватает: start или end" }
+            { error::thereAreNotEnoughStartAndEndDirectives, "Не хватает: start или end" },
+            { error::oneByteCommandWasExpected, "Ожидается: однобайтная команда" },
+            { error::addressCounterOverflow, "Переполнение счетчика адреса" }
         };
     };
 

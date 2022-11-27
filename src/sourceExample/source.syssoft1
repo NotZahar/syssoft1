@@ -1,6 +1,7 @@
 
 prog1 start 100
    jmp l1
+   nop
 a1 resb 10
 a2 resw 20
 b1 word 4096

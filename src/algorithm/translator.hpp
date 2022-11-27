@@ -25,6 +25,7 @@ namespace syssoft1 {
         const int maximumAddress;
         const int maximumRecordLength;
         const int maximumNumberOfHexadecimalDigitsForAddress;
+        const int maximumNumberOfHexadecimalDigitsForCommand;
         const int impossibleNonnegativeIntegerValue;
         const QString impossibleProgramName;
         int addressCounter;
@@ -55,6 +56,7 @@ namespace syssoft1 {
         bool hasEndDirective(const QStringList& _tokens);
         std::tuple<QString, int> processFirstNonEmptyRow(const QStringList& _tokens);
         QString decToHexStr(int _dec, int _numberOfDigits);
+        void increaseAddressCounter(int _commandLength);
 
     public:
         Translator();
