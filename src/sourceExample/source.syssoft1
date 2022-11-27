@@ -14,7 +14,7 @@ l1 loadr1 b1,
 
    add r1, r2
    saver1 b1,
-   exp 0x1fff
+   exp 0x1fff, // проверить запятую
    nop
 n1 nop
    end 0x100
