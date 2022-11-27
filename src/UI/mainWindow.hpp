@@ -71,6 +71,8 @@ namespace syssoft1 {
         QStandardItemModel* getOCTTableModel();
         QTableView* getOCTTableView();
         QTextEdit* getSourceEdit();
+        QTextEdit* getFirstPassErrorsEdit();
+        QTextEdit* getSecondPassErrorsEdit();
     };
 }
 

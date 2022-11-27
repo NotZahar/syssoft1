@@ -118,6 +118,14 @@ namespace syssoft1 {
         return sourceEdit;
     }
 
+    QTextEdit* MainWindow::getFirstPassErrorsEdit() {
+        return firstPassErrorsEdit;
+    }
+    
+    QTextEdit* MainWindow::getSecondPassErrorsEdit() {
+        return secondPassErrorsEdit;
+    }
+
     void MainWindow::firstPassBtnWasPushed(bool) {
         emit firstPassIsBegun();
     }

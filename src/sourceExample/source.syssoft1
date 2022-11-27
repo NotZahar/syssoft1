@@ -9,11 +9,11 @@ b3 byte c'Hello!'
 b4 byte 128
    byte 0x11
 
-l1 loadr1 b1
-   loadr2 b4
+l1 loadr1 b1,
+   loadr2 b4,
 
    add r1, r2
-   saver1 b1
+   saver1 b1,
    exp 0x1fff
    nop
 n1 nop
