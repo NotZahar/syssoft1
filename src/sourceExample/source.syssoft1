@@ -1,15 +1,20 @@
 
-prog1 start 100
+prog1 start 0x100
    jmp l1
-   nop
 a1 resb 10
 a2 resw 20
 b1 word 4096
 b2 byte x'2f4c008a'
 b3 byte c'Hello!'
 b4 byte 128
+   byte 0x11
+
 l1 loadr1 b1
    loadr2 b4
+
    add r1, r2
    saver1 b1
-   end 100
+   exp 0x1fff
+   nop
+n1 nop
+   end 0x100

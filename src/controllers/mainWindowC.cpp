@@ -116,7 +116,7 @@ namespace syssoft1 {
             int BOCNum = BOCStr.toInt(&ok, 0);
             int lengthNum = lengthStr.toInt(&ok, 0);
 
-            if (BOCNum > 255) {
+            if (BOCNum > 0x3f) {
                 continue;
             }
  

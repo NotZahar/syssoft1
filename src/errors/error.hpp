@@ -14,31 +14,57 @@ namespace syssoft1 {
         ~Error() = default;
 
         enum class error : int {
+            // controllers errors
             fileCannotBeOpened,
             redefiningMOC,
             redefiningBOC,
+
+            // translator errors
             startDirectiveWasExpected,
             incorrectFormatOfStartRow,
+            incorrectFormatOfRow,
             thereAreNotEnoughStartAndEndDirectives,
             labelOrMOCOrDirectiveWasExpected,
             MOCOrDirectiveWasExprcted,
             MOCWasExpected,
             oneByteCommandWasExpected,
-            addressCounterOverflow
+            numberWasExpected,
+            addressCounterOverflow,
+            symbolicNameAlreadyExists,
+            wrongCommandLength,
+            impossibleNumberOfTokens,
+            wrongAddressingType,
+            impossibleOperand,
+            directiveMustHaveOperand,
+            numberDoesNotFitInByte,
+            numberDoesNotFitInWord
         };
 
         static inline const std::map<error, const QString> errorMessages {
+            // controllers errors
             { error::fileCannotBeOpened, "Файл не может быть открыт" },
             { error::redefiningMOC, "Переопределение МКОП" },
             { error::redefiningBOC, "Переопределение ДКОП" },
+
+            // translator errors
             { error::labelOrMOCOrDirectiveWasExpected, "Ожидается: метка, или МКОП, или директива" },
             { error::MOCWasExpected, "Ожидается: МКОП" },
             { error::MOCOrDirectiveWasExprcted, "Ожидается: МКОП или директива" },
             { error::startDirectiveWasExpected, "Ожидается: start" },
             { error::incorrectFormatOfStartRow, "Неверный формат первой строки" },
+            { error::incorrectFormatOfRow, "Неверный формат строки" },
             { error::thereAreNotEnoughStartAndEndDirectives, "Не хватает: start или end" },
             { error::oneByteCommandWasExpected, "Ожидается: однобайтная команда" },
-            { error::addressCounterOverflow, "Переполнение счетчика адреса" }
+            { error::numberWasExpected, "Ожидается: число" },
+            { error::addressCounterOverflow, "Переполнение счетчика адреса" },
+            { error::symbolicNameAlreadyExists, "Символическое имя уже существует" },
+            { error::wrongCommandLength, "Задана неверная длина команды" },
+            { error::impossibleNumberOfTokens, "Превышено количество обрабатываемых токенов" },
+            { error::wrongAddressingType, "Указан неправильный тип адресации" },
+            { error::impossibleOperand, "Указан некорректный операнд" },
+            { error::directiveMustHaveOperand, "Директива должна иметь операнд" },
+            { error::numberDoesNotFitInByte, "Число не помещается в байт" },
+            { error::numberDoesNotFitInWord, "Число не помещается в слово" }
         };
     };
 
