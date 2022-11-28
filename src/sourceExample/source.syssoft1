@@ -12,7 +12,8 @@ b4 byte 128
 l1 loadr1 b1,
    loadr2 b4,
 
-   add r1, r2
+   add r1 r2
+d1 add r3, r4
    saver1 b1,
    exp 0x1fff,
    int 0x16

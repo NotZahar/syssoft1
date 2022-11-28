@@ -36,6 +36,7 @@ namespace syssoft1 {
             wrongAddressingType,
             impossibleOperand,
             directiveMustHaveOperand,
+            directiveMustHaveOnlyOneOperand,
             numberDoesNotFitInByte,
             numberDoesNotFitInWord
         };
@@ -63,6 +64,7 @@ namespace syssoft1 {
             { error::wrongAddressingType, "Указан неправильный тип адресации" },
             { error::impossibleOperand, "Указан некорректный операнд" },
             { error::directiveMustHaveOperand, "Директива должна иметь операнд" },
+            { error::directiveMustHaveOnlyOneOperand, "Директива должна иметь только 1 операнд" },
             { error::numberDoesNotFitInByte, "Число не помещается в байт" },
             { error::numberDoesNotFitInWord, "Число не помещается в слово" }
         };

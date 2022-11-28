@@ -84,7 +84,12 @@ namespace syssoft1 {
         }
     }
 
+    void MainWindowC::clearUI() {
+        mainWindow.getFirstPassErrorsEdit()->setText("");
+    }
+
     void MainWindowC::firstPassWasBegun() {
+        clearUI();
         std::map<QString, std::tuple<int, int>> OCT;
         QStandardItemModel* OCTTableModel = mainWindow.getOCTTableModel();
         QTextEdit* sourceEdit = mainWindow.getSourceEdit();

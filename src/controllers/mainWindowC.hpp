@@ -21,6 +21,7 @@ namespace syssoft1 {
 
     private:
         void fillOutTheWindowWithInitialData();
+        void clearUI();
 
     private slots:
        void firstPassWasBegun();

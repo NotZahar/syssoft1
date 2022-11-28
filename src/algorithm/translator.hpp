@@ -66,6 +66,7 @@ namespace syssoft1 {
         enum class addressingType : int {
             none = 0,
             immediate = 0,
+            reg = 0,
             direct
         };
 
@@ -75,6 +76,7 @@ namespace syssoft1 {
         bool isMOC(const QString& _token);
         bool isDirective(const QString& _token);
         bool isOperand(const QString& _token);
+        bool isRegister(const QString& _token);
         bool is2bNumber(const QString& _token);
         bool is3bNumber(const QString& _token);
         bool is3bString(const QString& _token);
@@ -91,9 +93,18 @@ namespace syssoft1 {
         void addCommandToIntermediateRepresentation(int _BOC);
         void addCommandToIntermediateRepresentation(int _BOC, const QString _body);
         void addDirectiveToIntermediateRepresentation(const QString _directive, const QString _body);
+        void labelMOC(const QString& _label, const QString& _MOC, const QString& _sourceRow);
+        void labelDirective(const QString& _label, const QString& _directive, const QString& _sourceRow);
+        void MOCOperand(const QString& _MOC, const QString& _operand, const QString& _sourceRow);
+        void directiveOperand(const QString& _directive, const QString& _operand, const QString& _sourceRow);
+        void labelMOCOperand(const QString& _label, const QString& _MOC, const QString& _operand, const QString& _sourceRow);
+        void labelDirectiveOperand(const QString& _label, const QString& _directive, const QString& _operand, const QString& _sourceRow);
+        void MOCOperandOperand(const QString& _MOC, const QString& _operand1, const QString& _operand2, const QString& _sourceRow);
+        void directiveOperandOperand(const QString& _directive, const QString& _operand1, const QString& _operand2, const QString& _sourceRow);
+        
         void Acase(const QString& _sourceRow, const QStringList& _tokens);
         void ABcase(const QString& _sourceRow, const QStringList& _tokens);
-        void ABCcase();
+        void ABCcase(const QString& _sourceRow, const QStringList& _tokens);
         void ABCDcase();
 
     public:
