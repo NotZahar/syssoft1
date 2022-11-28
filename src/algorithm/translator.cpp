@@ -108,7 +108,7 @@ namespace syssoft1 {
                 ABCcase(sourceRow, tokens);
                 break;
             case 4:
-                ABCDcase();
+                ABCDcase(sourceRow, tokens);
                 break;
             default:
                 throw ErrorData<QString>(sourceRow, Error::error::impossibleNumberOfTokens);
@@ -477,6 +477,15 @@ namespace syssoft1 {
         throw ErrorData<QString>(_sourceRow, Error::error::directiveMustHaveOnlyOneOperand);
     }
 
+    void Translator::labelMOCOperandOperand(const QString& _label, const QString& _MOC, const QString& _operand1, const QString& _operand2, const QString& _sourceRow) {
+        processLabel(_label, _sourceRow);
+        MOCOperandOperand(_MOC, _operand1, _operand2, _sourceRow);
+    }
+    
+    void Translator::labelDirectiveOperandOperand([[maybe_unused]] const QString& _label, [[maybe_unused]] const QString& _directive, [[maybe_unused]] const QString& _operand1, [[maybe_unused]] const QString& _operand2, const QString& _sourceRow) {
+        throw ErrorData<QString>(_sourceRow, Error::error::directiveMustHaveOnlyOneOperand);
+    }
+
     void Translator::Acase(const QString& _sourceRow, const QStringList& _tokens) {
         QString token = _tokens[0];
         bool IS_MOC = isMOC(token);
@@ -560,7 +569,31 @@ namespace syssoft1 {
         }
     }
 
-    void Translator::ABCDcase() {
-        // TODO:
+    void Translator::ABCDcase(const QString& _sourceRow, const QStringList& _tokens) {
+        QString firstToken = _tokens[0];
+        QString secondToken = _tokens[1];
+        QString thirdToken = _tokens[2];
+        QString fourthToken = _tokens[3];
+
+        bool FIRST_TOKEN_IS_LABEL = isLabel(firstToken);
+
+        bool SECOND_TOKEN_IS_MOC = isMOC(secondToken);
+        bool SECOND_TOKEN_IS_DIRECTIVE = isDirective(secondToken);
+
+        bool THIRD_TOKEN_IS_OPERAND = isOperand(thirdToken);
+        
+        bool FOURTH_TOKEN_IS_OPERAND = isOperand(fourthToken);
+        
+        if (!FIRST_TOKEN_IS_LABEL) {
+            throw ErrorData<QString>(_sourceRow, Error::error::labelWasExpected);
+        }
+
+        if (FIRST_TOKEN_IS_LABEL && SECOND_TOKEN_IS_MOC && THIRD_TOKEN_IS_OPERAND && FOURTH_TOKEN_IS_OPERAND) {
+            labelMOCOperandOperand(firstToken, secondToken, thirdToken, fourthToken, _sourceRow);
+        } else if (FIRST_TOKEN_IS_LABEL && SECOND_TOKEN_IS_DIRECTIVE && THIRD_TOKEN_IS_OPERAND && FOURTH_TOKEN_IS_OPERAND) {
+            labelDirectiveOperandOperand(firstToken, secondToken, thirdToken, fourthToken, _sourceRow);
+        } else {
+            throw ErrorData<QString>(_sourceRow, Error::error::incorrectFormatOfRow);
+        }
     }
 }

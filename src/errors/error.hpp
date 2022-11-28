@@ -27,6 +27,7 @@ namespace syssoft1 {
             labelOrMOCOrDirectiveWasExpected,
             MOCOrDirectiveWasExprcted,
             MOCWasExpected,
+            labelWasExpected,
             oneByteCommandWasExpected,
             numberWasExpected,
             addressCounterOverflow,
@@ -50,6 +51,7 @@ namespace syssoft1 {
             // translator errors
             { error::labelOrMOCOrDirectiveWasExpected, "Ожидается: метка, или МКОП, или директива" },
             { error::MOCWasExpected, "Ожидается: МКОП" },
+            { error::labelWasExpected, "Ожидается: метка" },
             { error::MOCOrDirectiveWasExprcted, "Ожидается: МКОП или директива" },
             { error::startDirectiveWasExpected, "Ожидается: start" },
             { error::incorrectFormatOfStartRow, "Неверный формат первой строки" },

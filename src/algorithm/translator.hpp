@@ -93,19 +93,24 @@ namespace syssoft1 {
         void addCommandToIntermediateRepresentation(int _BOC);
         void addCommandToIntermediateRepresentation(int _BOC, const QString _body);
         void addDirectiveToIntermediateRepresentation(const QString _directive, const QString _body);
+        
         void labelMOC(const QString& _label, const QString& _MOC, const QString& _sourceRow);
         void labelDirective(const QString& _label, const QString& _directive, const QString& _sourceRow);
         void MOCOperand(const QString& _MOC, const QString& _operand, const QString& _sourceRow);
         void directiveOperand(const QString& _directive, const QString& _operand, const QString& _sourceRow);
+        
         void labelMOCOperand(const QString& _label, const QString& _MOC, const QString& _operand, const QString& _sourceRow);
         void labelDirectiveOperand(const QString& _label, const QString& _directive, const QString& _operand, const QString& _sourceRow);
         void MOCOperandOperand(const QString& _MOC, const QString& _operand1, const QString& _operand2, const QString& _sourceRow);
         void directiveOperandOperand(const QString& _directive, const QString& _operand1, const QString& _operand2, const QString& _sourceRow);
         
+        void labelMOCOperandOperand(const QString& _label, const QString& _MOC, const QString& _operand1, const QString& _operand2, const QString& _sourceRow);
+        void labelDirectiveOperandOperand(const QString& _label, const QString& _directive, const QString& _operand1, const QString& _operand2, const QString& _sourceRow);
+
         void Acase(const QString& _sourceRow, const QStringList& _tokens);
         void ABcase(const QString& _sourceRow, const QStringList& _tokens);
         void ABCcase(const QString& _sourceRow, const QStringList& _tokens);
-        void ABCDcase();
+        void ABCDcase(const QString& _sourceRow, const QStringList& _tokens);
 
     public:
         Translator();
