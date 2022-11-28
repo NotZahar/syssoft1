@@ -474,6 +474,10 @@ namespace syssoft1 {
     }
 
     void Translator::labelDirectiveOperand(const QString& _label, const QString& _directive, const QString& _operand, const QString& _sourceRow) {
+        if (_directive == "end") {
+            // TODO: добавить проверку на end
+        }
+
         processLabel(_label, _sourceRow);
         directiveOperand(_directive, _operand, _sourceRow);
     }
