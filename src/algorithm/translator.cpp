@@ -37,6 +37,7 @@ namespace syssoft1 {
         maximumNumberByte(0xff),
         maximumNumberWord(0xffffff),
         maximumNumberIn3bCommand(0xffff),
+        maximumNumberIn2bCommand(0xff),
         maximumNumberOfHexadecimalDigitsForAddress(6),
         maximumNumberOfHexadecimalDigitsForCommand(2),
         impossibleNonnegativeIntegerValue(-1),
@@ -127,6 +128,16 @@ namespace syssoft1 {
 
     }
 
+    void Translator::clear() {
+        OCT.clear();
+        SNT.clear();
+        intermediateRepresentation.clear();
+        addressCounter = impossibleNonnegativeIntegerValue;
+        loadAddress = impossibleNonnegativeIntegerValue;
+        firstNonEmptyRowNumber = impossibleNonnegativeIntegerValue;
+        programName = impossibleProgramName;
+    }
+
     QStringList Translator::deleteEmptyTokens(const QStringList& _tokens) {
         QStringList withoutEmptyTokensList;
         for (const auto& token : _tokens) {
@@ -186,14 +197,21 @@ namespace syssoft1 {
         return operandMatch.hasMatch() && !isDirective(_token) && !isMOC(_token);
     }
 
-    bool Translator::isArgNumber(const QString& _token) {
+    bool Translator::is2bNumber(const QString& _token) {
+        bool ok;
+        int candidate = _token.toInt(&ok, 0);
+        
+        return ok && candidate <= maximumNumberIn2bCommand;
+    }
+
+    bool Translator::is3bNumber(const QString& _token) {
         bool ok;
         int candidate = _token.toInt(&ok, 0);
         
         return ok && candidate <= maximumNumberIn3bCommand;
     }
 
-    bool Translator::isArgString(const QString& _token) {
+    bool Translator::is3bString(const QString& _token) {
         QRegularExpressionMatch xStringMatch = xString3bRegex.match(_token);
         QRegularExpressionMatch cStringMatch = cString3bRegex.match(_token);
 
@@ -349,7 +367,7 @@ namespace syssoft1 {
                 throw ErrorData<QString>(_sourceRow, Error::error::wrongCommandLength);
             }
 
-            addCommandToIntermediateRepresentation(BOC << 2 | (int)addressingType::immediate);
+            addCommandToIntermediateRepresentation(BOC << 2 | (int)addressingType::none);
             increaseAddressCounter(commandLength, _sourceRow);
         } else if (IS_DIRECTIVE) {
             throw ErrorData<QString>(_sourceRow, Error::error::MOCWasExpected);
@@ -381,14 +399,20 @@ namespace syssoft1 {
                 throw ErrorData<QString>(_sourceRow, Error::error::wrongCommandLength);
             }
 
-            addCommandToIntermediateRepresentation(BOC << 2 | (int)addressingType::immediate);
+            addCommandToIntermediateRepresentation(BOC << 2 | (int)addressingType::none);
             increaseAddressCounter(commandLength, _sourceRow);
         } else if (FIRST_TOKEN_IS_LABEL && SECOND_TOKEN_IS_DIRECTIVE) {
             throw ErrorData<QString>(_sourceRow, Error::error::directiveMustHaveOperand);
         } else if (FIRST_TOKEN_IS_MOC && SECOND_TOKEN_IS_OPERAND) {
             const auto& [BOC, commandLength] = OCT.at(firstToken);
-            if (commandLength == 3) { // [3b]
-                if (isArgNumber(secondToken) || isArgString(secondToken)) {
+            if (commandLength == 2) { // [2b]
+                if (is2bNumber(secondToken)) {
+                    addCommandToIntermediateRepresentation(BOC << 2 | (int)addressingType::immediate, secondToken);
+                } else {
+                    throw ErrorData<QString>(_sourceRow, Error::error::impossibleOperand);
+                }
+            } else if (commandLength == 3) { // [3b]
+                if (is3bNumber(secondToken) || is3bString(secondToken)) {
                     addCommandToIntermediateRepresentation(BOC << 2 | (int)addressingType::immediate, secondToken);
                 } else {
                     throw ErrorData<QString>(_sourceRow, Error::error::impossibleOperand);
@@ -408,7 +432,13 @@ namespace syssoft1 {
             if (firstToken == "byte") {
                 if (isString(secondToken)) {
                     addDirectiveToIntermediateRepresentation(firstToken, secondToken);
-                    increaseAddressCounter(numberOfBytesInString(secondToken), _sourceRow);
+                    
+                    int numberofBytes = numberOfBytesInString(secondToken);
+                    if (numberofBytes == -1) {
+                        throw ErrorData<QString>(_sourceRow, Error::error::impossibleOperand);
+                    }
+
+                    increaseAddressCounter(numberofBytes, _sourceRow);
                 } else if (isByteNumber(secondToken)) {
                     addDirectiveToIntermediateRepresentation(firstToken, secondToken);
                     increaseAddressCounter(1, _sourceRow);

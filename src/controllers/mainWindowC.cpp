@@ -140,8 +140,10 @@ namespace syssoft1 {
             translator.firstPass(sourceEdit->toPlainText(), OCT);
         } catch (Error::error e) {
             mainWindow.getFirstPassErrorsEdit()->append("Ошибка: " + Error::errorMessages.at(e) + "\n");
+            translator.clear();
         } catch (ErrorData<QString> e) {
             mainWindow.getFirstPassErrorsEdit()->append(Error::errorMessages.at(e.err) + ": " + e.data +  + "\n");
-        } // TODO: после нажатия очищать translator если ошибка
+            translator.clear();
+        }
     }
 }

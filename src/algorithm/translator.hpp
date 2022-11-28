@@ -17,10 +17,10 @@
 
 namespace syssoft1 {
     // for an unambiguous description of the command (2 args - max):
-    // 1b: 0 arg(s) (none)
-    // 2b: 2 arg(s) (reg1, reg2)
-    // 3b: 1 arg(s) (number or string (<= 0xffff))
-    // 4b: 1 arg(s) (label)
+    // 1b: 0 args (none)
+    // 2b: 2 args (reg1, reg2) or 1 arg (number <= 0xff)
+    // 3b: 1 arg (number or string (<= 0xffff))
+    // 4b: 1 arg (label)
 
     // "word" doesn't work with strings
 
@@ -37,6 +37,7 @@ namespace syssoft1 {
         const int maximumNumberByte;
         const int maximumNumberWord;
         const int maximumNumberIn3bCommand;
+        const int maximumNumberIn2bCommand;
         const int maximumNumberOfHexadecimalDigitsForAddress;
         const int maximumNumberOfHexadecimalDigitsForCommand;
         const int impossibleNonnegativeIntegerValue;
@@ -63,8 +64,8 @@ namespace syssoft1 {
         const QRegularExpression cString3bRegex;
 
         enum class addressingType : int {
-            none = -1,
-            immediate,
+            none = 0,
+            immediate = 0,
             direct
         };
 
@@ -74,8 +75,9 @@ namespace syssoft1 {
         bool isMOC(const QString& _token);
         bool isDirective(const QString& _token);
         bool isOperand(const QString& _token);
-        bool isArgNumber(const QString& _token);
-        bool isArgString(const QString& _token);
+        bool is2bNumber(const QString& _token);
+        bool is3bNumber(const QString& _token);
+        bool is3bString(const QString& _token);
         bool isString(const QString& _token);
         bool isNumber(const QString& _token);
         bool isByteNumber(const QString& _token);
@@ -101,6 +103,7 @@ namespace syssoft1 {
     public:
         void firstPass(QString _source, std::map<QString, std::tuple<int, int>> _OCT);
         void secondPass();
+        void clear();
     };
 }
 
