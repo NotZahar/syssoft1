@@ -42,10 +42,12 @@ namespace syssoft1 {
         maximumNumberOfHexadecimalDigitsForCommand(2),
         impossibleNonnegativeIntegerValue(-1),
         impossibleProgramName(""),
+        addressOfEntryPoint(impossibleNonnegativeIntegerValue),
         addressCounter(impossibleNonnegativeIntegerValue),
         loadAddress(impossibleNonnegativeIntegerValue),
         firstNonEmptyRowNumber(impossibleNonnegativeIntegerValue),
         programName(impossibleProgramName),
+        endWasMet(false),
         whitespacesSplitRegex(" +"),
         labelRegex("^[a-z\\?\\.@\\_\\$]+[0-9]*$"),
         MOCRegex("^[a-z]+[0-9]*$"),
@@ -116,12 +118,11 @@ namespace syssoft1 {
             }
         }
 
-        for (const auto& v : intermediateRepresentation) {
-            for (const auto& s : v) {
-                std::cout << s.toStdString() << " ";
-            }
-            std::cout << std::endl;
-        }
+        intermediateRepresentation.push_front({
+            programName,
+            "0x" + decToHexStr(loadAddress, maximumNumberOfHexadecimalDigitsForAddress),
+            "0x" + decToHexStr(addressCounter - loadAddress, maximumNumberOfHexadecimalDigitsForAddress)
+        });
     }
 
     void Translator::secondPass() {
@@ -132,10 +133,16 @@ namespace syssoft1 {
         OCT.clear();
         SNT.clear();
         intermediateRepresentation.clear();
+        addressOfEntryPoint = impossibleNonnegativeIntegerValue;
         addressCounter = impossibleNonnegativeIntegerValue;
         loadAddress = impossibleNonnegativeIntegerValue;
         firstNonEmptyRowNumber = impossibleNonnegativeIntegerValue;
         programName = impossibleProgramName;
+        endWasMet = false;
+    }
+
+    const std::deque<std::vector<QString>>& Translator::getIntermediateRepresentation() {
+        return intermediateRepresentation;
     }
 
     QStringList Translator::deleteEmptyTokens(const QStringList& _tokens) {
@@ -277,16 +284,6 @@ namespace syssoft1 {
         }        
     }
 
-    bool Translator::hasEndDirective(const QStringList& _tokens) {
-        for (const auto& token : _tokens) {
-            if (endDirectiveRegex.match(token).hasMatch()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     std::tuple<QString, int> Translator::processFirstNonEmptyRow(const QStringList& _tokens) {
         if (_tokens.size() != 3) throw Error::error::incorrectFormatOfStartRow;
 
@@ -356,6 +353,14 @@ namespace syssoft1 {
         });
     }
 
+    void Translator::addEndDirectiveToIntermediateRepresentation(const QString _directive, int _address) {
+        intermediateRepresentation.push_back({
+            "0x" + decToHexStr(addressCounter, maximumNumberOfHexadecimalDigitsForAddress),
+            _directive,
+            "0x" + decToHexStr(_address, maximumNumberOfHexadecimalDigitsForAddress)
+        });
+    }
+
     void Translator::labelMOC(const QString& _label, const QString& _MOC, const QString& _sourceRow) {
         processLabel(_label, _sourceRow);
 
@@ -400,7 +405,28 @@ namespace syssoft1 {
     }
 
     void Translator::directiveOperand(const QString& _directive, const QString& _operand, const QString& _sourceRow) {
-        if (_directive == "byte") {
+        if (_directive == "start") {
+            throw ErrorData<QString>(_sourceRow, Error::error::startWasMet);
+        } else if (_directive == "end") {
+            if (endWasMet) {
+                throw ErrorData<QString>(_sourceRow, Error::error::endWasMet);  
+            }
+
+            if (!isNumber(_operand)) {
+                throw ErrorData<QString>(_sourceRow, Error::error::numberWasExpected);
+            }
+
+            bool ok;
+            int addressOfEntryPointCandidate = _operand.toInt(&ok, 0);
+
+            if (!ok || addressOfEntryPointCandidate > maximumAddress) {
+                throw ErrorData<QString>(_sourceRow, Error::error::numberWasExpected);
+            }
+
+            endWasMet = true;
+            addressOfEntryPoint = addressOfEntryPointCandidate;
+            addEndDirectiveToIntermediateRepresentation(_directive, addressOfEntryPoint);
+        } else if (_directive == "byte") {
             if (isString(_operand)) {
                 addDirectiveToIntermediateRepresentation(_directive, _operand);
                 

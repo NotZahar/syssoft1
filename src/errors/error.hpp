@@ -21,6 +21,8 @@ namespace syssoft1 {
 
             // translator errors
             startDirectiveWasExpected,
+            startWasMet,
+            endWasMet,
             incorrectFormatOfStartRow,
             incorrectFormatOfRow,
             thereAreNotEnoughStartAndEndDirectives,
@@ -54,6 +56,8 @@ namespace syssoft1 {
             { error::labelWasExpected, "Ожидается: метка" },
             { error::MOCOrDirectiveWasExprcted, "Ожидается: МКОП или директива" },
             { error::startDirectiveWasExpected, "Ожидается: start" },
+            { error::startWasMet, "Директива start ранее встречалась" },
+            { error::endWasMet, "Директива end ранее встречалась" },
             { error::incorrectFormatOfStartRow, "Неверный формат первой строки" },
             { error::incorrectFormatOfRow, "Неверный формат строки" },
             { error::thereAreNotEnoughStartAndEndDirectives, "Не хватает: start или end" },

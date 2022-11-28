@@ -86,6 +86,7 @@ namespace syssoft1 {
 
     void MainWindowC::clearUI() {
         mainWindow.getFirstPassErrorsEdit()->setText("");
+        mainWindow.getAuxiliaryEdit()->setText("");
     }
 
     void MainWindowC::firstPassWasBegun() {
@@ -143,6 +144,19 @@ namespace syssoft1 {
 
         try {
             translator.firstPass(sourceEdit->toPlainText(), OCT);
+        
+            const std::deque<std::vector<QString>>& intermediateRepresentation = translator.getIntermediateRepresentation();
+            QString content;
+            for (const auto& row : intermediateRepresentation) {
+                for (const auto& token : row) {
+                    content += token + " ";
+                }
+                content += "\n";
+            }
+
+            mainWindow.getAuxiliaryEdit()->setText(content);
+
+            // TODO: добавить ТСИ на форму
         } catch (Error::error e) {
             mainWindow.getFirstPassErrorsEdit()->append("Ошибка: " + Error::errorMessages.at(e) + "\n");
             translator.clear();

@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <vector>
+#include <deque>
 #include <string>
 #include <map>
 #include <set>
@@ -30,7 +31,7 @@ namespace syssoft1 {
         std::map<QString, int> SNT;
         const std::set<QString> directivesList;
         const std::set<QString> registersList;
-        std::vector<std::vector<QString>> intermediateRepresentation;
+        std::deque<std::vector<QString>> intermediateRepresentation;
         const int maximumNumberOfCommandArgs;
         const int maximumAddress;
         const int maximumRecordLength;
@@ -42,10 +43,12 @@ namespace syssoft1 {
         const int maximumNumberOfHexadecimalDigitsForCommand;
         const int impossibleNonnegativeIntegerValue;
         const QString impossibleProgramName;
+        int addressOfEntryPoint;
         int addressCounter;
         int loadAddress;
         int firstNonEmptyRowNumber;
         QString programName;
+        bool endWasMet;
 
         const QRegularExpression whitespacesSplitRegex;
         const QRegularExpression labelRegex;
@@ -85,14 +88,15 @@ namespace syssoft1 {
         bool isByteNumber(const QString& _token);
         bool isWordNumber(const QString& _token);
         int numberOfBytesInString(const QString& _str);
-        bool hasEndDirective(const QStringList& _tokens);
         std::tuple<QString, int> processFirstNonEmptyRow(const QStringList& _tokens);
         QString decToHexStr(int _dec, int _numberOfDigits);
         void increaseAddressCounter(int _inc, const QString& _sourceRow);
         void processLabel(const QString& _label, const QString& _sourceRow);
+        
         void addCommandToIntermediateRepresentation(int _BOC);
         void addCommandToIntermediateRepresentation(int _BOC, const QString _body);
         void addDirectiveToIntermediateRepresentation(const QString _directive, const QString _body);
+        void addEndDirectiveToIntermediateRepresentation(const QString _directive, int _address);
         
         void labelMOC(const QString& _label, const QString& _MOC, const QString& _sourceRow);
         void labelDirective(const QString& _label, const QString& _directive, const QString& _sourceRow);
@@ -120,6 +124,7 @@ namespace syssoft1 {
         void firstPass(QString _source, std::map<QString, std::tuple<int, int>> _OCT);
         void secondPass();
         void clear();
+        const std::deque<std::vector<QString>>& getIntermediateRepresentation();
     };
 }
 

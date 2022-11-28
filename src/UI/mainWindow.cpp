@@ -126,6 +126,10 @@ namespace syssoft1 {
         return secondPassErrorsEdit;
     }
 
+    QTextEdit* MainWindow::getAuxiliaryEdit() {
+        return auxiliaryEdit;
+    }
+
     void MainWindow::firstPassBtnWasPushed(bool) {
         emit firstPassIsBegun();
     }

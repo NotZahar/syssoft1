@@ -73,6 +73,7 @@ namespace syssoft1 {
         QTextEdit* getSourceEdit();
         QTextEdit* getFirstPassErrorsEdit();
         QTextEdit* getSecondPassErrorsEdit();
+        QTextEdit* getAuxiliaryEdit();
     };
 }
 
