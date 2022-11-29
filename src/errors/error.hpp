@@ -41,7 +41,8 @@ namespace syssoft1 {
             directiveMustHaveOperand,
             directiveMustHaveOnlyOneOperand,
             numberDoesNotFitInByte,
-            numberDoesNotFitInWord
+            numberDoesNotFitInWord,
+            thereShouldBeNoLabelInThisLine
         };
 
         static inline const std::map<error, const QString> errorMessages {
@@ -72,7 +73,8 @@ namespace syssoft1 {
             { error::directiveMustHaveOperand, "Директива должна иметь операнд" },
             { error::directiveMustHaveOnlyOneOperand, "Директива должна иметь только 1 операнд" },
             { error::numberDoesNotFitInByte, "Число не помещается в байт" },
-            { error::numberDoesNotFitInWord, "Число не помещается в слово" }
+            { error::numberDoesNotFitInWord, "Число не помещается в слово" },
+            { error::thereShouldBeNoLabelInThisLine, "В этой строке не должно быть метки" }
         };
     };
 

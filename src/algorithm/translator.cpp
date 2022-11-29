@@ -48,6 +48,7 @@ namespace syssoft1 {
         firstNonEmptyRowNumber(impossibleNonnegativeIntegerValue),
         programName(impossibleProgramName),
         endWasMet(false),
+        startWasMet(false),
         whitespacesSplitRegex(" +"),
         labelRegex("^[a-z\\?\\.@\\_\\$]+[0-9]*$"),
         MOCRegex("^[a-z]+[0-9]*$"),
@@ -95,6 +96,7 @@ namespace syssoft1 {
                 programName = _programName;
                 loadAddress = _loadAddress;
                 addressCounter = loadAddress;
+                startWasMet = true;
                 continue;
             }
 
@@ -118,6 +120,10 @@ namespace syssoft1 {
             }
         }
 
+        if (!startWasMet || !endWasMet) {
+            throw Error::error::thereAreNotEnoughStartAndEndDirectives;
+        }
+
         intermediateRepresentation.push_front({
             programName,
             "0x" + decToHexStr(loadAddress, maximumNumberOfHexadecimalDigitsForAddress),
@@ -139,10 +145,15 @@ namespace syssoft1 {
         firstNonEmptyRowNumber = impossibleNonnegativeIntegerValue;
         programName = impossibleProgramName;
         endWasMet = false;
+        startWasMet = false;
     }
 
     const std::deque<std::vector<QString>>& Translator::getIntermediateRepresentation() {
         return intermediateRepresentation;
+    }
+
+    const std::map<QString, int>& Translator::getSNT() {
+        return SNT;
     }
 
     QStringList Translator::deleteEmptyTokens(const QStringList& _tokens) {
@@ -475,7 +486,7 @@ namespace syssoft1 {
 
     void Translator::labelDirectiveOperand(const QString& _label, const QString& _directive, const QString& _operand, const QString& _sourceRow) {
         if (_directive == "end") {
-            // TODO: добавить проверку на end
+            throw ErrorData<QString>(_sourceRow, Error::error::thereShouldBeNoLabelInThisLine);
         }
 
         processLabel(_label, _sourceRow);

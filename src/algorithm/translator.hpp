@@ -49,6 +49,7 @@ namespace syssoft1 {
         int firstNonEmptyRowNumber;
         QString programName;
         bool endWasMet;
+        bool startWasMet;
 
         const QRegularExpression whitespacesSplitRegex;
         const QRegularExpression labelRegex;
@@ -123,8 +124,10 @@ namespace syssoft1 {
     public:
         void firstPass(QString _source, std::map<QString, std::tuple<int, int>> _OCT);
         void secondPass();
+        
         void clear();
         const std::deque<std::vector<QString>>& getIntermediateRepresentation();
+        const std::map<QString, int>& getSNT();
     };
 }
 

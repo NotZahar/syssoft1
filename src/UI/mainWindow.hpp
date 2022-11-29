@@ -16,11 +16,6 @@
 #include <QLabel>
 #include <QFont>
 
-#include <map>
-#include <string>
-#include <tuple>
-#include <utility>
-
 namespace syssoft1 {
     class MainWindow : public QWidget {
         Q_OBJECT
@@ -57,9 +52,11 @@ namespace syssoft1 {
 
     private slots:
         void firstPassBtnWasPushed(bool);
+        void secondPassBtnWasPushed(bool);
 
     signals:
         void firstPassIsBegun();
+        void secondPassIsBegun();
 
     public:
         MainWindow() = delete;
@@ -70,10 +67,14 @@ namespace syssoft1 {
     public:
         QStandardItemModel* getOCTTableModel();
         QTableView* getOCTTableView();
+        QStandardItemModel* getSNTTableModel();
+        QTableView* getSNTTableView();
         QTextEdit* getSourceEdit();
         QTextEdit* getFirstPassErrorsEdit();
         QTextEdit* getSecondPassErrorsEdit();
         QTextEdit* getAuxiliaryEdit();
+        QPushButton* getFirstPassBtn();
+        QPushButton* getSecondPassBtn();
     };
 }
 

@@ -32,6 +32,7 @@ namespace syssoft1 {
         initialWindowGeometryHeight(600)
     {
         QObject::connect(firstPassBtn, &QPushButton::clicked, this, &MainWindow::firstPassBtnWasPushed);
+        QObject::connect(secondPassBtn, &QPushButton::clicked, this, &MainWindow::secondPassBtnWasPushed);
 
         this->setGeometry(0, 0, initialWindowGeometryWidth, initialWindowGeometryHeight);
         this->setWindowTitle("Двухпросмотровый ассемблер в абсолютном формате");
@@ -40,6 +41,7 @@ namespace syssoft1 {
         
         palette.setColor(QPalette::Window, Qt::black);
         palette.setColor(QPalette::WindowText, Qt::white);
+        palette.setColor(QPalette::Button, Qt::lightGray);
         this->setAutoFillBackground(true); 
         this->setPalette(palette);
 
@@ -72,10 +74,12 @@ namespace syssoft1 {
         OBMEdit->setReadOnly(true);
         OCTTableView->setShowGrid(true);
         OCTTableView->verticalHeader()->setVisible(false);
+        SNTTableView->setShowGrid(true);
+        SNTTableView->verticalHeader()->setVisible(false);
 
         sourceEdit->setMinimumHeight((2.7 / 5.0) * initialWindowGeometryHeight);
         auxiliaryEdit->setMinimumHeight((2.2 / 5.0) * initialWindowGeometryHeight);
-        firstPassErrorsEdit->setMinimumHeight((0.8 / 5.0) * initialWindowGeometryHeight);
+        firstPassErrorsEdit->setMaximumHeight((0.4 / 5.0) * initialWindowGeometryHeight);
         OBMEdit->setMinimumHeight((2.7 / 5.0) * initialWindowGeometryHeight);
 
         leftLayout->addWidget(sourceLabel);
@@ -114,6 +118,14 @@ namespace syssoft1 {
         return OCTTableView;
     }
 
+    QStandardItemModel* MainWindow::getSNTTableModel() {
+        return SNTTableModel;
+    }
+    
+    QTableView* MainWindow::getSNTTableView() {
+        return SNTTableView;
+    }
+
     QTextEdit* MainWindow::getSourceEdit() {
         return sourceEdit;
     }
@@ -130,7 +142,19 @@ namespace syssoft1 {
         return auxiliaryEdit;
     }
 
+    QPushButton* MainWindow::getFirstPassBtn() {
+        return firstPassBtn;
+    }
+    
+    QPushButton* MainWindow::getSecondPassBtn() {
+        return secondPassBtn;
+    }
+
     void MainWindow::firstPassBtnWasPushed(bool) {
         emit firstPassIsBegun();
+    }
+
+    void MainWindow::secondPassBtnWasPushed(bool) {
+        emit secondPassIsBegun();
     }
 }

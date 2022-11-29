@@ -6,6 +6,7 @@ namespace syssoft1 {
         translator()
     {
         QObject::connect(&mainWindow, &MainWindow::firstPassIsBegun, this, &MainWindowC::firstPassWasBegun);
+        QObject::connect(&mainWindow, &MainWindow::secondPassIsBegun, this, &MainWindowC::secondPassWasBegun);
 
         fillOutTheWindowWithInitialData();
         mainWindow.show();
@@ -84,9 +85,51 @@ namespace syssoft1 {
         }
     }
 
+    void MainWindowC::addDataToUIAfterFirstPass() {
+        const std::deque<std::vector<QString>>& intermediateRepresentation = translator.getIntermediateRepresentation();
+        QString content;
+        for (const auto& row : intermediateRepresentation) {
+            for (const auto& token : row) {
+                content += token + " ";
+            }
+            content += "\n";
+        }
+        mainWindow.getAuxiliaryEdit()->setText(content);
+
+        const std::map<QString, int>& SNT = translator.getSNT();
+        QStandardItemModel* SNTTableModel = mainWindow.getSNTTableModel();
+        QTableView* SNTTableView = mainWindow.getSNTTableView();
+        
+        const QStringList SNTLabels = {"СИ", "Адрес"};
+        SNTTableModel->setHorizontalHeaderLabels(SNTLabels);
+        SNTTableView->setModel(SNTTableModel);
+        for (int i = 0; i < SNTLabels.size(); ++i) SNTTableView->horizontalHeader()->setSectionResizeMode(i, QHeaderView::Stretch);
+        
+        int row = 0;
+        for (const auto& SNTRow : SNT) {
+            QString address;
+            QString hexStr = QString::number(SNTRow.second, 16);
+            const int lackOfZeros = 6 - hexStr.size(); // 6-digit hex address: 0x000000
+            for (int i = 0; i < lackOfZeros; ++i) {
+                address += "0";
+            }
+            address += hexStr;
+
+            QStandardItem* SNCell = new QStandardItem(SNTRow.first);
+            QStandardItem* addressCell = new QStandardItem("0x" + address);
+            SNCell->setEditable(false);
+            addressCell->setEditable(false);
+            
+            SNTTableModel->setItem(row, 0, SNCell);
+            SNTTableModel->setItem(row, 1, addressCell);
+            ++row;
+        }
+    }
+
     void MainWindowC::clearUI() {
         mainWindow.getFirstPassErrorsEdit()->setText("");
         mainWindow.getAuxiliaryEdit()->setText("");
+        mainWindow.getSNTTableModel()->clear();
     }
 
     void MainWindowC::firstPassWasBegun() {
@@ -144,25 +187,19 @@ namespace syssoft1 {
 
         try {
             translator.firstPass(sourceEdit->toPlainText(), OCT);
-        
-            const std::deque<std::vector<QString>>& intermediateRepresentation = translator.getIntermediateRepresentation();
-            QString content;
-            for (const auto& row : intermediateRepresentation) {
-                for (const auto& token : row) {
-                    content += token + " ";
-                }
-                content += "\n";
-            }
-
-            mainWindow.getAuxiliaryEdit()->setText(content);
-
-            // TODO: добавить ТСИ на форму
+            addDataToUIAfterFirstPass();
+            mainWindow.getFirstPassBtn()->setEnabled(false);
+            mainWindow.getSecondPassBtn()->setEnabled(true);
         } catch (Error::error e) {
-            mainWindow.getFirstPassErrorsEdit()->append("Ошибка: " + Error::errorMessages.at(e) + "\n");
+            mainWindow.getFirstPassErrorsEdit()->append("Ошибка: " + Error::errorMessages.at(e));
             translator.clear();
         } catch (ErrorData<QString> e) {
-            mainWindow.getFirstPassErrorsEdit()->append(Error::errorMessages.at(e.err) + ": " + e.data +  + "\n");
+            mainWindow.getFirstPassErrorsEdit()->append(Error::errorMessages.at(e.err) + ": " + e.data);
             translator.clear();
         }
+    }
+
+    void MainWindowC::secondPassWasBegun() {
+        
     }
 }
