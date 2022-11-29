@@ -27,8 +27,8 @@ namespace syssoft1 {
         OCTTableView->setModel(OCTTableModel);
         for (int i = 0; i < OCTLabels.size(); ++i) OCTTableView->horizontalHeader()->setSectionResizeMode(i, QHeaderView::Stretch);
         
-        QFile sourceFile("/home/zahar/Documents/syssoft/syssoft1/src/sourceExample/source.syssoft1");
-        QFile OCTFile("/home/zahar/Documents/syssoft/syssoft1/src/sourceExample/oct.syssoft1");
+        QFile sourceFile("../src/sourceExample/source.syssoft1");
+        QFile OCTFile("../src/sourceExample/oct.syssoft1");
         
         if (sourceFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
             QString startSource = "";
