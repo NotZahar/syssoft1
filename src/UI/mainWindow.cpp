@@ -21,6 +21,7 @@ namespace syssoft1 {
         OBMEdit(new QTextEdit()),
         firstPassBtn(new QPushButton("Первый проход")),
         secondPassBtn(new QPushButton("Второй проход")),
+        againBtn(new QPushButton("↺")),
         sourceLabel(new QLabel("Исходный код")),
         OCTLabel(new QLabel("Таблица кодов операций")),
         auxiliaryLabel(new QLabel("Вспомогательная таблица")),
@@ -33,6 +34,7 @@ namespace syssoft1 {
     {
         QObject::connect(firstPassBtn, &QPushButton::clicked, this, &MainWindow::firstPassBtnWasPushed);
         QObject::connect(secondPassBtn, &QPushButton::clicked, this, &MainWindow::secondPassBtnWasPushed);
+        QObject::connect(againBtn, &QPushButton::clicked, this, &MainWindow::againBtnWasPushed);
 
         this->setGeometry(0, 0, initialWindowGeometryWidth, initialWindowGeometryHeight);
         this->setWindowTitle("Двухпросмотровый ассемблер в абсолютном формате");
@@ -46,6 +48,7 @@ namespace syssoft1 {
         this->setPalette(palette);
 
         secondPassBtn->setEnabled(false);
+        againBtn->setEnabled(false);
 
         const QFont generalFont("Ubuntu Mono", 14);
         const QFont labelFont("Ubuntu Mono", 12);
@@ -59,6 +62,7 @@ namespace syssoft1 {
         SNTTableView->setFont(generalFont);
         firstPassBtn->setFont(btnFont);
         secondPassBtn->setFont(btnFont);
+        againBtn->setFont(btnFont);
         sourceLabel->setFont(labelFont);
         sourceLabel->setFont(labelFont);
         OCTLabel->setFont(labelFont);
@@ -102,6 +106,7 @@ namespace syssoft1 {
         topLayout->addLayout(rightLayout);
         bottomLayout->addWidget(firstPassBtn);
         bottomLayout->addWidget(secondPassBtn);
+        bottomLayout->addWidget(againBtn);
         mainLayout->addLayout(topLayout);
         mainLayout->addLayout(bottomLayout);
         this->setLayout(mainLayout);
@@ -155,8 +160,16 @@ namespace syssoft1 {
         return secondPassBtn;
     }
 
+    QPushButton* MainWindow::getAgainBtn() {
+        return againBtn;
+    }
+
     void MainWindow::firstPassBtnWasPushed(bool) {
         emit firstPassIsBegun();
+    }
+
+    void MainWindow::againBtnWasPushed(bool) {
+        emit againIsBegun();
     }
 
     void MainWindow::secondPassBtnWasPushed(bool) {

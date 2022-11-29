@@ -7,6 +7,7 @@ namespace syssoft1 {
     {
         QObject::connect(&mainWindow, &MainWindow::firstPassIsBegun, this, &MainWindowC::firstPassWasBegun);
         QObject::connect(&mainWindow, &MainWindow::secondPassIsBegun, this, &MainWindowC::secondPassWasBegun);
+        QObject::connect(&mainWindow, &MainWindow::againIsBegun, this, &MainWindowC::againWasBegun);
 
         fillOutTheWindowWithInitialData();
         mainWindow.show();
@@ -141,11 +142,15 @@ namespace syssoft1 {
 
     void MainWindowC::clearUI() {
         mainWindow.getFirstPassErrorsEdit()->setText("");
+        mainWindow.getSecondPassErrorsEdit()->setText("");
         mainWindow.getAuxiliaryEdit()->setText("");
+        mainWindow.getOBMEdit()->setText("");
         mainWindow.getSNTTableModel()->clear();
     }
 
     void MainWindowC::firstPassWasBegun() {
+        mainWindow.getFirstPassBtn()->setEnabled(false);
+
         clearUI();
         
         std::map<QString, std::tuple<int, int>> OCT;
@@ -205,13 +210,14 @@ namespace syssoft1 {
             addDataToUIAfterFirstPass();
             mainWindow.getSourceEdit()->setReadOnly(true);
             mainWindow.getOCTTableView()->setEnabled(false);
-            mainWindow.getFirstPassBtn()->setEnabled(false);
             mainWindow.getSecondPassBtn()->setEnabled(true);
         } catch (Error::error e) {
             mainWindow.getFirstPassErrorsEdit()->append("Ошибка: " + Error::errorMessages.at(e));
+            mainWindow.getFirstPassBtn()->setEnabled(true);
             translator.clear();
         } catch (ErrorData<QString> e) {
             mainWindow.getFirstPassErrorsEdit()->append(Error::errorMessages.at(e.err) + ": " + e.data);
+            mainWindow.getFirstPassBtn()->setEnabled(true);
             translator.clear();
         }
     }
@@ -225,5 +231,16 @@ namespace syssoft1 {
         }
 
         mainWindow.getSecondPassBtn()->setEnabled(false);
+        mainWindow.getAgainBtn()->setEnabled(true);
+    }
+
+    void MainWindowC::againWasBegun() {
+        mainWindow.getAgainBtn()->setEnabled(false);
+        translator.clear();
+        clearUI();
+
+        mainWindow.getSourceEdit()->setReadOnly(false);
+        mainWindow.getOCTTableView()->setEnabled(true);
+        mainWindow.getFirstPassBtn()->setEnabled(true);
     }
 }

@@ -27,6 +27,7 @@ namespace syssoft1 {
     private slots:
        void firstPassWasBegun();
        void secondPassWasBegun();
+       void againWasBegun();
 
     public:
         MainWindowC();

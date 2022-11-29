@@ -39,6 +39,7 @@ namespace syssoft1 {
         QTextEdit* OBMEdit;
         QPushButton* firstPassBtn;
         QPushButton* secondPassBtn;
+        QPushButton* againBtn;
         QLabel* sourceLabel;
         QLabel* OCTLabel;
         QLabel* auxiliaryLabel;
@@ -53,10 +54,12 @@ namespace syssoft1 {
     private slots:
         void firstPassBtnWasPushed(bool);
         void secondPassBtnWasPushed(bool);
+        void againBtnWasPushed(bool);
 
     signals:
         void firstPassIsBegun();
         void secondPassIsBegun();
+        void againIsBegun();
 
     public:
         MainWindow() = delete;
@@ -76,6 +79,7 @@ namespace syssoft1 {
         QTextEdit* getAuxiliaryEdit();
         QPushButton* getFirstPassBtn();
         QPushButton* getSecondPassBtn();
+        QPushButton* getAgainBtn();
     };
 }
 
