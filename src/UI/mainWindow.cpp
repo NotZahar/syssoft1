@@ -80,6 +80,7 @@ namespace syssoft1 {
         sourceEdit->setMinimumHeight((2.7 / 5.0) * initialWindowGeometryHeight);
         auxiliaryEdit->setMinimumHeight((2.2 / 5.0) * initialWindowGeometryHeight);
         firstPassErrorsEdit->setMaximumHeight((0.4 / 5.0) * initialWindowGeometryHeight);
+        secondPassErrorsEdit->setMaximumHeight((0.4 / 5.0) * initialWindowGeometryHeight);
         OBMEdit->setMinimumHeight((2.7 / 5.0) * initialWindowGeometryHeight);
 
         leftLayout->addWidget(sourceLabel);

@@ -7,15 +7,15 @@ b1 word 4096
 b2 byte x'2f4c008a'
 b3 byte c'Hello!'
 b4 byte 128
-   byte 0x111
+   byte 0x11
 
-l1 loadr1 b1,
-   loadr2 b4,
+l1 loadr1 b1
+   loadr2 b4
 
-   add r1 r2
+   add r1, r2
 d1 add r3, r4
-   saver1 b1,
-   exp 0x1fff,
+   saver1 b1
+   exp 0x1fff
    int 0x16
    nop
 n1 nop
