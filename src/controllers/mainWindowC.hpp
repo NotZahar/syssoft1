@@ -2,7 +2,6 @@
 #define MAINWINDOWC_H
 
 #include <QObject>
-#include <QDebug>
 
 #include <regex>
 
@@ -22,6 +21,7 @@ namespace syssoft1 {
     private:
         void fillOutTheWindowWithInitialData();
         void addDataToUIAfterFirstPass();
+        void addDataToUIAfterSecondPass();
         void clearUI();
 
     private slots:

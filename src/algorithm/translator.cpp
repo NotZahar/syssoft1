@@ -132,7 +132,19 @@ namespace syssoft1 {
     }
 
     void Translator::secondPass() {
-
+        for (auto& row : intermediateRepresentation) {
+            if (row[0] == programName) {
+                row.push_front("H");
+            } else if (row[1] == "end") {
+                row[0] = "E";
+                row[1] = row[2];
+                row.pop_back();
+            } else if (isDirective(row[1])) {
+                processDirectiveRowSP(row);
+            } else {
+                processOPRowSP(row);
+            }
+        }
     }
 
     void Translator::clear() {
@@ -148,7 +160,7 @@ namespace syssoft1 {
         startWasMet = false;
     }
 
-    const std::deque<std::vector<QString>>& Translator::getIntermediateRepresentation() {
+    const std::deque<std::deque<QString>>& Translator::getIntermediateRepresentation() {
         return intermediateRepresentation;
     }
 
@@ -241,6 +253,18 @@ namespace syssoft1 {
         bool IS_CSTRING = cStringMatch.hasMatch();
         
         return IS_XSTRING || IS_CSTRING;
+    }
+
+    bool Translator::isXString(const QString& _token) {
+        QRegularExpressionMatch xStringMatch = xStringRegex.match(_token);
+        
+        return xStringMatch.hasMatch();
+    }
+    
+    bool Translator::isCString(const QString& _token) {
+        QRegularExpressionMatch cStringMatch = cStringRegex.match(_token);
+        
+        return cStringMatch.hasMatch();
     }
 
     bool Translator::isString(const QString& _token) {
@@ -338,6 +362,119 @@ namespace syssoft1 {
             SNT.insert({_label, addressCounter});
         } else {
             throw ErrorData<QString>(_sourceRow, Error::error::symbolicNameAlreadyExists);
+        }
+    }
+
+    void Translator::processDirectiveRowSP(std::deque<QString>& _row) {
+        QString directive = _row.at(1);
+        QString body = _row.at(2);
+        
+        _row.pop_back();
+        _row.pop_back();
+        _row.push_front("T");
+
+        if (directive == "byte") {
+            if (isNumber(body)) {
+                _row.push_back("0x02");
+                bool ok;
+                _row.push_back("0x" + decToHexStr(body.toInt(&ok, 0), 2));
+            } else if (isXString(body)) {
+                QString processedStr = body.mid(2);
+                processedStr.chop(1);
+                
+                _row.push_back("0x" + decToHexStr(processedStr.size(), 2));
+                _row.push_back("0x" + processedStr);
+            } else if (isCString(body)) {
+                QString processedStr = body.mid(2);
+                processedStr.chop(1);
+                
+                QStringList hexChars;
+                for (const auto& ch: processedStr) {
+                    hexChars << QString::number(ch.unicode(), 16);
+                }
+                QString res = hexChars.join("");
+
+                _row.push_back("0x" + decToHexStr(res.size(), 2));
+                _row.push_back("0x" + res);
+            }
+        } else if (directive == "word") {
+            _row.push_back("0x06");
+            bool ok;
+            _row.push_back("0x" + decToHexStr(body.toInt(&ok, 0), 6));
+        } else if (directive == "resb") {
+            _row.push_back("0x00");
+        } else if (directive == "resw") {
+            _row.push_back("0x00");
+        }
+    }
+    
+    void Translator::processOPRowSP(std::deque<QString>& _row) {
+        QString OP = _row.at(1);
+
+        if (_row.size() == 2) { // we have no body
+            _row.pop_back();
+            _row.push_front("T");
+
+            _row.push_back("0x02");
+            _row.push_back(OP);
+
+            return;
+        }
+
+        QString body = _row.at(2);
+        
+        _row.pop_back();
+        _row.pop_back();
+        _row.push_front("T");
+
+        if (isLabel(body)) {
+            if (SNT.find(body) == SNT.end()) {
+                throw ErrorData<QString>(body, Error::error::symbolicNameWasNotFound);
+            }
+
+            int address = SNT.at(body);
+            _row.push_back("0x08");
+            _row.push_back(OP + decToHexStr(address, maximumNumberOfHexadecimalDigitsForAddress));
+        } else if (isXString(body)) {
+            QString processedStr = body.mid(2);
+            processedStr.chop(1);
+            
+            _row.push_back("0x" + decToHexStr(2 + processedStr.size(), 2));
+            _row.push_back(OP + processedStr);
+        } else if (isCString(body)) {
+            QString processedStr = body.mid(2);
+            processedStr.chop(1);
+            
+            QStringList hexChars;
+            for (const auto& ch: processedStr) {
+                hexChars << QString::number(ch.unicode(), 16);
+            }
+            QString res = hexChars.join("");
+
+            _row.push_back("0x" + decToHexStr(2 + res.size(), 2));
+            _row.push_back(OP + res);
+        } else if (isNumber(body)) {
+            bool ok;
+            int num = body.toInt(&ok, 16);
+            QString hexStr = QString::number(num, 16);
+
+            _row.push_back("0x" + decToHexStr(2 + hexStr.size(), 2));
+            _row.push_back(OP + hexStr);
+        } else { // 2 registers
+            QStringList regs = body.split(" ");
+            QString reg1 = regs[0];
+            QString reg2 = regs[1];
+            reg1.chop(1);
+
+            QString reg1NumberStr = reg1.mid(1);
+            QString reg2NumberStr = reg2.mid(1);
+            int reg1Number = reg1NumberStr.toInt();
+            int reg2Number = reg2NumberStr.toInt();
+
+            QString regPair = QString::number(reg1Number, 16) + QString::number(reg2Number, 16);
+
+            _row.push_back("0x04");
+            _row.push_back(OP + regPair);
         }
     }
 

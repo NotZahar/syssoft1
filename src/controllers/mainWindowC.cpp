@@ -86,7 +86,7 @@ namespace syssoft1 {
     }
 
     void MainWindowC::addDataToUIAfterFirstPass() {
-        const std::deque<std::vector<QString>>& intermediateRepresentation = translator.getIntermediateRepresentation();
+        const std::deque<std::deque<QString>>& intermediateRepresentation = translator.getIntermediateRepresentation();
         QString content;
         for (const auto& row : intermediateRepresentation) {
             for (const auto& token : row) {
@@ -126,6 +126,19 @@ namespace syssoft1 {
         }
     }
 
+    void MainWindowC::addDataToUIAfterSecondPass() {
+        const std::deque<std::deque<QString>>& intermediateRepresentation = translator.getIntermediateRepresentation();
+        QString content;
+        for (const auto& row : intermediateRepresentation) {
+            for (const auto& token : row) {
+                content += token + " ";
+            }
+            content += "\n";
+        }
+
+        mainWindow.getOBMEdit()->setText(content);
+    }
+
     void MainWindowC::clearUI() {
         mainWindow.getFirstPassErrorsEdit()->setText("");
         mainWindow.getAuxiliaryEdit()->setText("");
@@ -134,6 +147,7 @@ namespace syssoft1 {
 
     void MainWindowC::firstPassWasBegun() {
         clearUI();
+        
         std::map<QString, std::tuple<int, int>> OCT;
         QStandardItemModel* OCTTableModel = mainWindow.getOCTTableModel();
         QTextEdit* sourceEdit = mainWindow.getSourceEdit();
@@ -187,7 +201,10 @@ namespace syssoft1 {
 
         try {
             translator.firstPass(sourceEdit->toPlainText(), OCT);
+
             addDataToUIAfterFirstPass();
+            mainWindow.getSourceEdit()->setReadOnly(true);
+            mainWindow.getOCTTableView()->setEnabled(false);
             mainWindow.getFirstPassBtn()->setEnabled(false);
             mainWindow.getSecondPassBtn()->setEnabled(true);
         } catch (Error::error e) {
@@ -200,6 +217,13 @@ namespace syssoft1 {
     }
 
     void MainWindowC::secondPassWasBegun() {
-        
+        try {
+            translator.secondPass();
+            addDataToUIAfterSecondPass();
+        } catch(ErrorData<QString> e) {
+            mainWindow.getSecondPassErrorsEdit()->append(Error::errorMessages.at(e.err) + ": " + e.data);
+        }
+
+        mainWindow.getSecondPassBtn()->setEnabled(false);
     }
 }

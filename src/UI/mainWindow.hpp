@@ -70,6 +70,7 @@ namespace syssoft1 {
         QStandardItemModel* getSNTTableModel();
         QTableView* getSNTTableView();
         QTextEdit* getSourceEdit();
+        QTextEdit* getOBMEdit();
         QTextEdit* getFirstPassErrorsEdit();
         QTextEdit* getSecondPassErrorsEdit();
         QTextEdit* getAuxiliaryEdit();

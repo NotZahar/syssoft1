@@ -4,10 +4,8 @@
 #include <QString>
 #include <QStringList>
 #include <QRegularExpression>
-#include <QDebug>
 
 #include <iostream>
-#include <vector>
 #include <deque>
 #include <string>
 #include <map>
@@ -31,7 +29,7 @@ namespace syssoft1 {
         std::map<QString, int> SNT;
         const std::set<QString> directivesList;
         const std::set<QString> registersList;
-        std::deque<std::vector<QString>> intermediateRepresentation;
+        std::deque<std::deque<QString>> intermediateRepresentation;
         const int maximumNumberOfCommandArgs;
         const int maximumAddress;
         const int maximumRecordLength;
@@ -84,6 +82,8 @@ namespace syssoft1 {
         bool is2bNumber(const QString& _token);
         bool is3bNumber(const QString& _token);
         bool is3bString(const QString& _token);
+        bool isXString(const QString& _token);
+        bool isCString(const QString& _token);
         bool isString(const QString& _token);
         bool isNumber(const QString& _token);
         bool isByteNumber(const QString& _token);
@@ -93,6 +93,9 @@ namespace syssoft1 {
         QString decToHexStr(int _dec, int _numberOfDigits);
         void increaseAddressCounter(int _inc, const QString& _sourceRow);
         void processLabel(const QString& _label, const QString& _sourceRow);
+
+        void processDirectiveRowSP(std::deque<QString>& _row);
+        void processOPRowSP(std::deque<QString>& _row);
         
         void addCommandToIntermediateRepresentation(int _BOC);
         void addCommandToIntermediateRepresentation(int _BOC, const QString _body);
@@ -126,7 +129,7 @@ namespace syssoft1 {
         void secondPass();
         
         void clear();
-        const std::deque<std::vector<QString>>& getIntermediateRepresentation();
+        const std::deque<std::deque<QString>>& getIntermediateRepresentation();
         const std::map<QString, int>& getSNT();
     };
 }

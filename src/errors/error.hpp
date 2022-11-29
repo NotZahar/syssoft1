@@ -42,7 +42,8 @@ namespace syssoft1 {
             directiveMustHaveOnlyOneOperand,
             numberDoesNotFitInByte,
             numberDoesNotFitInWord,
-            thereShouldBeNoLabelInThisLine
+            thereShouldBeNoLabelInThisLine,
+            symbolicNameWasNotFound
         };
 
         static inline const std::map<error, const QString> errorMessages {
@@ -74,7 +75,8 @@ namespace syssoft1 {
             { error::directiveMustHaveOnlyOneOperand, "Директива должна иметь только 1 операнд" },
             { error::numberDoesNotFitInByte, "Число не помещается в байт" },
             { error::numberDoesNotFitInWord, "Число не помещается в слово" },
-            { error::thereShouldBeNoLabelInThisLine, "В этой строке не должно быть метки" }
+            { error::thereShouldBeNoLabelInThisLine, "В этой строке не должно быть метки" },
+            { error::symbolicNameWasNotFound, "Символическое имя не было найдено" }
         };
     };
 

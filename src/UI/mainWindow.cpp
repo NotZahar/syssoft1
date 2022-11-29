@@ -131,6 +131,10 @@ namespace syssoft1 {
         return sourceEdit;
     }
 
+    QTextEdit* MainWindow::getOBMEdit() {
+        return OBMEdit;
+    }
+
     QTextEdit* MainWindow::getFirstPassErrorsEdit() {
         return firstPassErrorsEdit;
     }
