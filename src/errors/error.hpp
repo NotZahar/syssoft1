@@ -32,6 +32,7 @@ namespace syssoft1 {
             labelWasExpected,
             oneByteCommandWasExpected,
             numberWasExpected,
+            MOCOrEndDirectiveWasExpected,
             addressCounterOverflow,
             symbolicNameAlreadyExists,
             wrongCommandLength,
@@ -43,7 +44,8 @@ namespace syssoft1 {
             numberDoesNotFitInByte,
             numberDoesNotFitInWord,
             thereShouldBeNoLabelInThisLine,
-            symbolicNameWasNotFound
+            symbolicNameWasNotFound,
+            programIsNotInAbsoluteFormat
         };
 
         static inline const std::map<error, const QString> errorMessages {
@@ -76,7 +78,9 @@ namespace syssoft1 {
             { error::numberDoesNotFitInByte, "Число не помещается в байт" },
             { error::numberDoesNotFitInWord, "Число не помещается в слово" },
             { error::thereShouldBeNoLabelInThisLine, "В этой строке не должно быть метки" },
-            { error::symbolicNameWasNotFound, "Символическое имя не было найдено" }
+            { error::symbolicNameWasNotFound, "Символическое имя не было найдено" },
+            { error::programIsNotInAbsoluteFormat, "Программа не в абсолютном формате" },
+            { error::MOCOrEndDirectiveWasExpected, "Ожидается: МКОП или end" }
         };
     };
 

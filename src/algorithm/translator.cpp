@@ -50,20 +50,21 @@ namespace syssoft1 {
         endWasMet(false),
         startWasMet(false),
         whitespacesSplitRegex(" +"),
-        labelRegex("^[a-z\\?\\.@\\_\\$]+[0-9]*$"),
+        labelRegex("^[a-zA-Z\\_]+[0-9]*$"),
         MOCRegex("^[a-z]+[0-9]*$"),
         directiveRegex("^[a-z]+$"),
-        operandRegex("^(0x[0-9a-f]{1,7}|[0-9]{1,9}|x'[0-9a-f]{1,255}'|c'[a-zA-Z0-9\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\=\\+\\_\\№\\;\\:\\?]{1,127}'|[a-z\\?\\.@\\_\\$]+[0-9]*),?$"),
+        operandRegex("^(0x[0-9a-f]{1,7}|[0-9]{1,9}|x'[0-9a-f]{1,255}'|c'(\\s|\\S){1,127}'|[a-zA-Z\\_]+[0-9]*),?$"),
         programNameRegex("^[a-zA-Z\\_]+[0-9]*$"),
         startDirectiveRegex("^start$"),
         loadAddressRegex("^(0x[0-9a-f]{1,6}|[0-9]{1,7})$"),
         endDirectiveRegex("^end$"),
         numberRegex("^(0x[0-9a-f]{1,7}|[0-9]{1,9})$"),
-        stringRegex("^(x'[0-9a-f]{1,255}'|c'[a-zA-Z0-9\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\=\\+\\_\\№\\;\\:\\?]{1,127}')$"),
+        stringRegex("^(x'[0-9a-f]{1,255}'|c'(\\s|\\S){1,127}')$"),
         xStringRegex("^x'[0-9a-f]{1,255}'$"),
-        cStringRegex("^c'[a-zA-Z0-9\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\=\\+\\_\\№\\;\\:\\?]{1,127}'$"),
+        cStringRegex("^c'(\\s|\\S){1,127}'$"),
+        pureCStringRegex("c'(\\s|\\S){1,127}'"),
         xString3bRegex("^x'[0-9a-f]{4}'$"),
-        cString3bRegex("^c'[a-zA-Z0-9\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\=\\+\\_\\№\\;\\:\\?]{2}'$")
+        cString3bRegex("^c'(\\s|\\S){2}'$")
     {
 
     }
@@ -82,7 +83,7 @@ namespace syssoft1 {
 
         for (int i = 0; i < numberOfRows; ++i) {
             QString sourceRow = sourceRows[i];
-            QStringList allTokens = sourceRow.split(whitespacesSplitRegex);
+            QStringList allTokens = splitIntoTokens(sourceRow);
             QStringList tokens = deleteEmptyTokens(allTokens);
 
             if (tokens.empty()) continue;
@@ -93,12 +94,19 @@ namespace syssoft1 {
 
             if (i == firstNonEmptyRowNumber) { // we are on the first non-empty row
                 const auto [_programName, _loadAddress] = processFirstNonEmptyRow(tokens);
+                
+                if (_loadAddress == 0) { // this is not an absolute format
+                    throw Error::error::programIsNotInAbsoluteFormat;
+                }
+                
                 programName = _programName;
                 loadAddress = _loadAddress;
                 addressCounter = loadAddress;
                 startWasMet = true;
                 continue;
             }
+
+            if (endWasMet) break;
 
             const int numberOftokens = tokens.size();
             switch (numberOftokens) {
@@ -177,6 +185,24 @@ namespace syssoft1 {
         }
 
         return withoutEmptyTokensList;
+    }
+
+    QStringList Translator::splitIntoTokens(const QString& _sourceRow) {
+        QRegularExpressionMatch rowWithCStringCandidateMatch = pureCStringRegex.match(_sourceRow);
+        if (rowWithCStringCandidateMatch.hasMatch()) {
+            QString cString = rowWithCStringCandidateMatch.captured();
+            int startIndex = rowWithCStringCandidateMatch.capturedStart();
+            int endIndex = rowWithCStringCandidateMatch.capturedEnd();
+            
+            QStringList before = _sourceRow.mid(0, startIndex).split(whitespacesSplitRegex);
+            QStringList after = _sourceRow.mid(endIndex).split(whitespacesSplitRegex);
+            
+            before << cString;
+
+            return before + after;
+        }
+
+        return _sourceRow.split(whitespacesSplitRegex);
     }
 
     bool Translator::isLabel(const QString& _token) {
@@ -521,8 +547,19 @@ namespace syssoft1 {
         increaseAddressCounter(commandLength, _sourceRow);
     }
 
-    void Translator::labelDirective([[maybe_unused]] const QString& _label, [[maybe_unused]] const QString& _directive, const QString& _sourceRow) {
-        throw ErrorData<QString>(_sourceRow, Error::error::directiveMustHaveOperand);
+    void Translator::labelDirective(const QString& _label, const QString& _directive, const QString& _sourceRow) {
+        if (_directive != "end") {
+            throw ErrorData<QString>(_sourceRow, Error::error::directiveMustHaveOperand);
+        }
+
+        if (endWasMet) {
+            throw ErrorData<QString>(_sourceRow, Error::error::endWasMet);
+        }
+
+        processLabel(_label, _sourceRow);
+        endWasMet = true;
+        addressOfEntryPoint = loadAddress;
+        addEndDirectiveToIntermediateRepresentation(_directive, addressOfEntryPoint);
     }
 
     void Translator::MOCOperand(const QString& _MOC, const QString& _operand, const QString& _sourceRow) {
@@ -571,6 +608,7 @@ namespace syssoft1 {
                 throw ErrorData<QString>(_sourceRow, Error::error::numberWasExpected);
             }
 
+            addressOfEntryPointCandidate = std::clamp(addressOfEntryPointCandidate, loadAddress, addressCounter); 
             endWasMet = true;
             addressOfEntryPoint = addressOfEntryPointCandidate;
             addEndDirectiveToIntermediateRepresentation(_directive, addressOfEntryPoint);
@@ -622,10 +660,6 @@ namespace syssoft1 {
     }
 
     void Translator::labelDirectiveOperand(const QString& _label, const QString& _directive, const QString& _operand, const QString& _sourceRow) {
-        if (_directive == "end") {
-            throw ErrorData<QString>(_sourceRow, Error::error::thereShouldBeNoLabelInThisLine);
-        }
-
         processLabel(_label, _sourceRow);
         directiveOperand(_directive, _operand, _sourceRow);
     }
@@ -682,7 +716,17 @@ namespace syssoft1 {
             addCommandToIntermediateRepresentation(BOC << 2 | (int)addressingType::none);
             increaseAddressCounter(commandLength, _sourceRow);
         } else if (IS_DIRECTIVE) {
-            throw ErrorData<QString>(_sourceRow, Error::error::MOCWasExpected);
+            if (token != "end") {
+                throw ErrorData<QString>(_sourceRow, Error::error::MOCOrEndDirectiveWasExpected);
+            }
+
+            if (endWasMet) {
+                throw ErrorData<QString>(_sourceRow, Error::error::endWasMet);  
+            }
+
+            endWasMet = true;
+            addressOfEntryPoint = loadAddress;
+            addEndDirectiveToIntermediateRepresentation(token, addressOfEntryPoint);
         }
     }
     

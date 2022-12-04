@@ -4,6 +4,7 @@
 #include <QString>
 #include <QStringList>
 #include <QRegularExpression>
+#include <QDebug>
 
 #include <iostream>
 #include <deque>
@@ -62,6 +63,7 @@ namespace syssoft1 {
         const QRegularExpression stringRegex;
         const QRegularExpression xStringRegex;
         const QRegularExpression cStringRegex;
+        const QRegularExpression pureCStringRegex;
         const QRegularExpression xString3bRegex;
         const QRegularExpression cString3bRegex;
 
@@ -74,6 +76,7 @@ namespace syssoft1 {
 
     private:
         QStringList deleteEmptyTokens(const QStringList& _tokens);
+        QStringList splitIntoTokens(const QString& _sourceRow);
         bool isLabel(const QString& _token);
         bool isMOC(const QString& _token);
         bool isDirective(const QString& _token);
