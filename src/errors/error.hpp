@@ -45,7 +45,8 @@ namespace syssoft1 {
             numberDoesNotFitInWord,
             thereShouldBeNoLabelInThisLine,
             symbolicNameWasNotFound,
-            programIsNotInAbsoluteFormat
+            programIsNotInAbsoluteFormat,
+            OutOfAddressSpace
         };
 
         static inline const std::map<error, const QString> errorMessages {
@@ -80,7 +81,8 @@ namespace syssoft1 {
             { error::thereShouldBeNoLabelInThisLine, "В этой строке не должно быть метки" },
             { error::symbolicNameWasNotFound, "Символическое имя не было найдено" },
             { error::programIsNotInAbsoluteFormat, "Программа не в абсолютном формате" },
-            { error::MOCOrEndDirectiveWasExpected, "Ожидается: МКОП или end" }
+            { error::MOCOrEndDirectiveWasExpected, "Ожидается: МКОП или end" },
+            { error::OutOfAddressSpace, "Выход за пределы адресного пространства" }
         };
     };
 

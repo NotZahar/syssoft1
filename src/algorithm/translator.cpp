@@ -50,10 +50,10 @@ namespace syssoft1 {
         endWasMet(false),
         startWasMet(false),
         whitespacesSplitRegex(" +"),
-        labelRegex("^[a-zA-Z\\_]+[0-9]*$"),
+        labelRegex("^[a-zA-Z\\_]+[0-9]*\\_*$"),
         MOCRegex("^[a-z]+[0-9]*$"),
         directiveRegex("^[a-z]+$"),
-        operandRegex("^(0x[0-9a-f]{1,7}|[0-9]{1,9}|x'[0-9a-f]{1,255}'|c'(\\s|\\S){1,127}'|[a-zA-Z\\_]+[0-9]*),?$"),
+        operandRegex("^(0x[0-9a-f]{1,7}|[0-9]{1,9}|x'[0-9a-f]{1,255}'|c'(\\s|\\S){1,127}'|[a-zA-Z\\_]+[0-9]*\\_*),?$"),
         programNameRegex("^[a-zA-Z\\_]+[0-9]*$"),
         startDirectiveRegex("^start$"),
         loadAddressRegex("^(0x[0-9a-f]{1,6}|[0-9]{1,7})$"),
@@ -608,7 +608,10 @@ namespace syssoft1 {
                 throw ErrorData<QString>(_sourceRow, Error::error::numberWasExpected);
             }
 
-            addressOfEntryPointCandidate = std::clamp(addressOfEntryPointCandidate, loadAddress, addressCounter); 
+            if (addressOfEntryPointCandidate < loadAddress || addressOfEntryPointCandidate > addressCounter) {
+                throw ErrorData<QString>(_sourceRow, Error::error::OutOfAddressSpace);
+            }
+ 
             endWasMet = true;
             addressOfEntryPoint = addressOfEntryPointCandidate;
             addEndDirectiveToIntermediateRepresentation(_directive, addressOfEntryPoint);
