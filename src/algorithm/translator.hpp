@@ -16,7 +16,7 @@
 #include "../errors/error.hpp"
 
 namespace syssoft1 {
-    // for an unambiguous description of the command (2 args - max):
+    // for an unambiguous description of the command (2 args - max, b - byte):
     // 1b: 0 args (none)
     // 2b: 2 args (reg1, reg2) or 1 arg (number <= 0xff)
     // 3b: 1 arg (number or string (<= 0xffff))

@@ -547,19 +547,14 @@ namespace syssoft1 {
         increaseAddressCounter(commandLength, _sourceRow);
     }
 
-    void Translator::labelDirective(const QString& _label, const QString& _directive, const QString& _sourceRow) {
+    void Translator::labelDirective([[maybe_unused]] const QString& _label, const QString& _directive, const QString& _sourceRow) {
         if (_directive != "end") {
             throw ErrorData<QString>(_sourceRow, Error::error::directiveMustHaveOperand);
         }
 
-        if (endWasMet) {
-            throw ErrorData<QString>(_sourceRow, Error::error::endWasMet);
+        if (_directive == "end") {
+            throw ErrorData<QString>(_sourceRow, Error::error::thereShouldBeNoLabelInThisLine);
         }
-
-        processLabel(_label, _sourceRow);
-        endWasMet = true;
-        addressOfEntryPoint = loadAddress;
-        addEndDirectiveToIntermediateRepresentation(_directive, addressOfEntryPoint);
     }
 
     void Translator::MOCOperand(const QString& _MOC, const QString& _operand, const QString& _sourceRow) {
@@ -663,6 +658,10 @@ namespace syssoft1 {
     }
 
     void Translator::labelDirectiveOperand(const QString& _label, const QString& _directive, const QString& _operand, const QString& _sourceRow) {
+        if (_directive == "end") {
+            throw ErrorData<QString>(_sourceRow, Error::error::thereShouldBeNoLabelInThisLine);
+        }
+        
         processLabel(_label, _sourceRow);
         directiveOperand(_directive, _operand, _sourceRow);
     }
@@ -703,14 +702,14 @@ namespace syssoft1 {
 
     void Translator::Acase(const QString& _sourceRow, const QStringList& _tokens) {
         QString token = _tokens[0];
-        bool IS_MOC = isMOC(token);
-        bool IS_DIRECTIVE = isDirective(token);
+        bool TOKEN_IS_MOC = isMOC(token);
+        bool TOKEN_IS_DIRECTIVE = isDirective(token);
         
-        if (!IS_MOC && !IS_DIRECTIVE) {
+        if (!TOKEN_IS_MOC && !TOKEN_IS_DIRECTIVE) {
             throw ErrorData<QString>(_sourceRow, Error::error::MOCOrDirectiveWasExpected);
         }
 
-        if (IS_MOC) {
+        if (TOKEN_IS_MOC) {
             const auto& [BOC, commandLength] = OCT.at(token);
             if (commandLength != 1) { // [1b]
                 throw ErrorData<QString>(_sourceRow, Error::error::wrongCommandLength);
@@ -718,7 +717,7 @@ namespace syssoft1 {
 
             addCommandToIntermediateRepresentation(BOC << 2 | (int)addressingType::none);
             increaseAddressCounter(commandLength, _sourceRow);
-        } else if (IS_DIRECTIVE) {
+        } else if (TOKEN_IS_DIRECTIVE) {
             if (token != "end") {
                 throw ErrorData<QString>(_sourceRow, Error::error::MOCOrEndDirectiveWasExpected);
             }
