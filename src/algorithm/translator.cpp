@@ -707,7 +707,7 @@ namespace syssoft1 {
         bool IS_DIRECTIVE = isDirective(token);
         
         if (!IS_MOC && !IS_DIRECTIVE) {
-            throw ErrorData<QString>(_sourceRow, Error::error::MOCOrDirectiveWasExprcted);
+            throw ErrorData<QString>(_sourceRow, Error::error::MOCOrDirectiveWasExpected);
         }
 
         if (IS_MOC) {
